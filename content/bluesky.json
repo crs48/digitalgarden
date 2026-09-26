@@ -1,1 +1,91 @@
-[]
+[
+  {
+    "title": "Another fantastic Rich Hickey",
+    "url": "https://www.youtube.com/watch?v=SxdOUGdseq4",
+    "category": "Talks",
+    "tags": [
+      "talk",
+      "video"
+    ],
+    "thumbnail": "https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreig3g4ziqzp3dojjph4q6gixrnlb4q4q6xaqafqi4a73c6imhosjiy",
+    "links": [
+      {
+        "url": "https://www.youtube.com/watch?v=SxdOUGdseq4",
+        "title": "\"Simple Made Easy\" - Rich Hickey (2011)"
+      }
+    ],
+    "media": [
+      {
+        "type": "youtube",
+        "url": "https://www.youtube.com/watch?v=SxdOUGdseq4"
+      }
+    ],
+    "added": "2026-09-26",
+    "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf35rtloc2y"
+  },
+  {
+    "title": "My favorite conference",
+    "url": "https://www.youtube.com/watch?v=2V1FtfBDsLU",
+    "category": "Talks",
+    "tags": [
+      "talk",
+      "code",
+      "video"
+    ],
+    "thumbnail": "https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreifp6kxlletvoha7xlmjwt53425yxfqanynk5oku6dhzefbihtlxey",
+    "links": [
+      {
+        "url": "https://www.youtube.com/watch?v=2V1FtfBDsLU",
+        "title": "Effective Programs - 10 Years of Clojure - Rich Hickey"
+      }
+    ],
+    "media": [
+      {
+        "type": "youtube",
+        "url": "https://www.youtube.com/watch?v=2V1FtfBDsLU"
+      }
+    ],
+    "added": "2026-09-26",
+    "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf332bgq22y"
+  },
+  {
+    "title": "My favorite dancing panda",
+    "url": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf2uzb73c2y",
+    "category": "Videos",
+    "tags": [
+      "gif"
+    ],
+    "media": [
+      {
+        "type": "video",
+        "url": "https://video.bsky.app/watch/did%3Aplc%3Afvfdugmhgbbvxjppo2kkveq2/bafkreifxcvkd2opsgb4hp7wv7apvn6yx7dkj2pbe7k5zcvzdcsxxwfp6sq/playlist.m3u8",
+        "poster": "https://video.bsky.app/watch/did%3Aplc%3Afvfdugmhgbbvxjppo2kkveq2/bafkreifxcvkd2opsgb4hp7wv7apvn6yx7dkj2pbe7k5zcvzdcsxxwfp6sq/thumbnail.jpg",
+        "width": 120,
+        "height": 120,
+        "loop": true
+      }
+    ],
+    "added": "2026-09-26",
+    "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf2uzb73c2y"
+  },
+  {
+    "title": "This is my favorite diagram of programming paradigms",
+    "url": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf2nmhnn22y",
+    "category": "Images",
+    "tags": [
+      "viz",
+      "code"
+    ],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreibj2ywh2izbwqc22kruyfcttcfteoauiinaomqxsr47tf5w2f7g3m",
+        "alt": "",
+        "width": 2786,
+        "height": 1480
+      }
+    ],
+    "added": "2026-09-26",
+    "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf2nmhnn22y"
+  }
+]

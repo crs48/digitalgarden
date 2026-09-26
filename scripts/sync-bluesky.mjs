@@ -16,7 +16,7 @@ try {
     };
     const { feed, did } = await collectFeed(bluesky.handle, fetchJson);
     const previous = await readImported();
-    // Keep the newest post when the same link was shared more than once.
+    // A post is one entry, even when it includes several links or attachments.
     const incoming = entriesFromFeed(feed, bluesky, did).map(entry => validateEntry(entry));
     const entries = mergeEntries(incoming, previous, bluesky.excludeUrls).sort((a, b) => (b.added ?? '').localeCompare(a.added ?? ''));
     const serialized = `${JSON.stringify(entries, null, 2)}\n`;
@@ -24,7 +24,7 @@ try {
       await writeFile('content/bluesky.json.tmp', serialized);
       await rename('content/bluesky.json.tmp', 'content/bluesky.json');
     }
-    console.log(`Bluesky: ${incoming.length} matching links; ${entries.length} saved in content/bluesky.json.`);
+    console.log(`Bluesky: ${incoming.length} matching posts; ${entries.length} saved in content/bluesky.json.`);
   }
 } catch (error) {
   console.error(`Bluesky sync failed: ${error.message}. Saved entries were not changed.`);

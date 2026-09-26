@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { parse } from 'yaml';
+import { providerEmbed } from './media.mjs';
 
 export const isWebUrl = value => {
   try { return typeof value === 'string' && ['https:', 'http:'].includes(new URL(value).protocol); }
@@ -27,7 +28,7 @@ const allowedKeys = (object, keys, path) => Object.keys(object).forEach(key => {
 
 export const validateEntry = (entry, path = 'entry') => {
   if (!entry || typeof entry !== 'object' || Array.isArray(entry)) fail(path, 'must be an object');
-  allowedKeys(entry, ['title', 'url', 'creator', 'category', 'year', 'note', 'tags', 'thumbnail', 'added', 'example', 'source'], path);
+  allowedKeys(entry, ['title', 'url', 'creator', 'category', 'year', 'note', 'tags', 'thumbnail', 'added', 'example', 'source', 'media', 'links'], path);
   if (!text(entry.title)) fail(`${path}.title`, 'is required');
   if (!isWebUrl(entry.url)) fail(`${path}.url`, 'must be a full http(s) URL');
   optionalText(entry, ['creator', 'category', 'note'], path);
@@ -37,6 +38,29 @@ export const validateEntry = (entry, path = 'entry') => {
   if (entry.example !== undefined && typeof entry.example !== 'boolean') fail(`${path}.example`, 'must be true or false');
   if (entry.thumbnail !== undefined && !isWebUrl(entry.thumbnail) && !(typeof entry.thumbnail === 'string' && /^(?:\.\/)?images\/[\w./-]+$/.test(entry.thumbnail) && !entry.thumbnail.split('/').includes('..'))) fail(`${path}.thumbnail`, 'use an http(s) URL or images/filename');
   if (entry.source !== undefined && !isWebUrl(entry.source)) fail(`${path}.source`, 'must be a full http(s) URL');
+  if (entry.links !== undefined) {
+    if (!Array.isArray(entry.links)) fail(`${path}.links`, 'must be a list');
+    entry.links.forEach((link, i) => {
+      if (!link || typeof link !== 'object' || Array.isArray(link)) fail(`${path}.links[${i}]`, 'must be an object');
+      allowedKeys(link, ['title', 'url'], `${path}.links[${i}]`);
+      if (!text(link.title) || !isWebUrl(link.url)) fail(`${path}.links[${i}]`, 'requires a title and http(s) URL');
+    });
+  }
+  if (entry.media !== undefined) {
+    if (!Array.isArray(entry.media)) fail(`${path}.media`, 'must be a list');
+    entry.media.forEach((media, i) => {
+      const field = `${path}.media[${i}]`;
+      if (!media || typeof media !== 'object' || Array.isArray(media)) fail(field, 'must be an object');
+      allowedKeys(media, ['type', 'url', 'alt', 'poster', 'width', 'height', 'loop'], field);
+      if (!['image', 'video', 'audio', 'youtube', 'vimeo', 'spotify', 'soundcloud'].includes(media.type)) fail(`${field}.type`, 'unsupported media type');
+      if (!isWebUrl(media.url)) fail(`${field}.url`, 'must be a full http(s) URL');
+      if (['youtube', 'vimeo', 'spotify', 'soundcloud'].includes(media.type) && providerEmbed(media.url)?.type !== media.type) fail(`${field}.url`, 'must match the specified media provider');
+      if (media.alt !== undefined && typeof media.alt !== 'string') fail(`${field}.alt`, 'must be text');
+      if (media.poster !== undefined && !isWebUrl(media.poster)) fail(`${field}.poster`, 'must be a full http(s) URL');
+      ['width', 'height'].forEach(key => { if (media[key] !== undefined && (!Number.isInteger(media[key]) || media[key] < 1 || media[key] > 100000)) fail(`${field}.${key}`, 'must be a positive pixel dimension'); });
+      if (media.loop !== undefined && typeof media.loop !== 'boolean') fail(`${field}.loop`, 'must be true or false');
+    });
+  }
   return { ...entry, category: entry.category ?? 'Links', tags: [...new Set(entry.tags ?? [])] };
 };
 
@@ -69,9 +93,10 @@ export const validateConfig = config => {
 
 export const mergeEntries = (manual, imported, excludeUrls = []) => {
   const excluded = new Set(excludeUrls.map(canonicalUrl));
-  const ordered = [...manual, ...imported].map(entry => [canonicalUrl(entry.url), entry]);
+  const curatedUrls = new Set(manual.filter(entry => !entry.source).map(entry => canonicalUrl(entry.url)));
+  const ordered = [...manual, ...imported.filter(entry => !curatedUrls.has(canonicalUrl(entry.url)))].map(entry => [canonicalUrl(entry.source ?? entry.url), entry]);
   const byUrl = new Map([...ordered].reverse());
-  return [...new Set(ordered.map(([url]) => url))].filter(url => !excluded.has(url)).map(url => byUrl.get(url));
+  return [...new Set(ordered.map(([url]) => url))].map(url => byUrl.get(url)).filter(entry => !excluded.has(canonicalUrl(entry.url)) && (!entry.source || !excluded.has(canonicalUrl(entry.source))));
 };
 
 export const readConfig = async () => validateConfig(parse(await readFile('garden.yaml', 'utf8')));

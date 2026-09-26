@@ -52,10 +52,11 @@ test('empty gardens render a real empty state', () => {
 });
 test('Bluesky imports metadata, category, tags, notes, and provenance', () => {
   const [entry] = entriesFromFeed([feedItem()], config(), did);
-  assert.equal(entry.title, 'A good paper');
+  assert.equal(entry.title, 'A useful idea');
   assert.equal(entry.category, 'Papers');
-  assert.deepEqual(entry.tags, ['distributed-data']);
-  assert.equal(entry.note, 'A useful idea');
+  assert.deepEqual(entry.tags, ['paper', 'distributed-data']);
+  assert.equal(entry.note, undefined);
+  assert.equal(entry.links[0].title, 'A good paper');
   assert.equal(entry.added, '2026-09-25');
   assert.equal(entry.thumbnail, 'https://example.com/cover.png');
   assert.equal(entry.source, `https://bsky.app/profile/${did}/post/abc`);
@@ -65,7 +66,7 @@ test('only explicitly marked original posts are included by default', () => {
   const items = [
     { ...original, reason: { $type: 'app.bsky.feed.defs#reasonRepost' } },
     feedItem({ author: { did: 'did:plc:someone-else' } }),
-    feedItem({ record: { ...original.post.record, reply: {} } }),
+    feedItem({ record: { ...original.post.record, text: 'An unmarked reply', reply: {} } }),
     feedItem({ record: { ...original.post.record, text: '#gardening is different' } }),
   ];
   assert.deepEqual(entriesFromFeed(items, config(), did), []);
@@ -76,9 +77,10 @@ test('link facets respect UTF-8 offsets and multiple links', () => {
   const facet = url => ({ index: { byteStart: Buffer.byteLength(text.slice(0, text.indexOf(url))), byteEnd: Buffer.byteLength(text.slice(0, text.indexOf(url) + url.length)) }, features: [{ $type: 'app.bsky.richtext.facet#link', uri: url }] });
   const item = feedItem({ embed: undefined, record: { text, createdAt: '2026-09-25T00:00:00Z', facets: [facet('https://a.test/one'), facet('https://b.test/two')] } });
   const entries = entriesFromFeed([item], config(), did);
-  assert.equal(entries.length, 2);
-  assert.equal(entries[0].note, '🌱 café and');
-  assert.equal(entries[0].title, 'a.test');
+  assert.equal(entries.length, 1);
+  assert.equal(entries[0].links.length, 2);
+  assert.equal(entries[0].title, '🌱 café and');
+  assert.equal(entries[0].links[0].title, 'a.test');
 });
 test('record-with-media embeds and case-insensitive tags work', () => {
   const original = feedItem();

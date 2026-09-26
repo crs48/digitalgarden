@@ -20,12 +20,15 @@ bluesky:
   defaultCategory: Links
   categoryTags:
     talk: Talks
-    video: Talks
+    video: Videos
     paper: Papers
     essay: Essays
     book: Books
     movie: Movies
     tv: TV shows
+    image: Images
+    audio: Audio
+    note: Notes
   excludeUrls: []            # Ignore a link here, including an earlier import.
 
 # These are EXAMPLES, not a claim about your personal favorites.

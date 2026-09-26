@@ -4,7 +4,9 @@
   "private": true,
   "description": "A quiet, YAML-powered digital garden for GitHub Pages.",
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/build.mjs",
@@ -12,5 +14,8 @@
     "sync": "node scripts/sync-bluesky.mjs",
     "check": "npm test && npm run build"
   },
-  "dependencies": { "yaml": "^2.9.1" }
+  "dependencies": {
+    "hls.js": "^1.7.3",
+    "yaml": "^2.9.1"
+  }
 }

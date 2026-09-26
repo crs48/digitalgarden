@@ -62,6 +62,7 @@ const update = (writeUrl = true) => {
     return button;
   }));
   active.hidden = state.tags.length === 0;
+  document.dispatchEvent(new Event('garden:filter'));
   if (writeUrl) {
     const url = new URL(location.href);
     ['category', 'tag', 'q', 'sort'].forEach(key => url.searchParams.delete(key));
