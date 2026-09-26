@@ -1,5 +1,28 @@
 [
   {
+    "title": "Another fantastic Rich Hickey talk Simple Made Easy",
+    "url": "https://www.youtube.com/watch?v=SxdOUGdseq4",
+    "category": "Videos",
+    "tags": [
+      "code"
+    ],
+    "thumbnail": "https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreig3g4ziqzp3dojjph4q6gixrnlb4q4q6xaqafqi4a73c6imhosjiy",
+    "links": [
+      {
+        "url": "https://www.youtube.com/watch?v=SxdOUGdseq4",
+        "title": "\"Simple Made Easy\" - Rich Hickey (2011)"
+      }
+    ],
+    "media": [
+      {
+        "type": "youtube",
+        "url": "https://www.youtube.com/watch?v=SxdOUGdseq4"
+      }
+    ],
+    "added": "2026-09-26",
+    "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf3xmbp2s2q"
+  },
+  {
     "title": "My favorite conference talk Effective Programs by Rich Hickey",
     "url": "https://www.youtube.com/watch?v=2V1FtfBDsLU",
     "category": "Videos",
