@@ -125,7 +125,7 @@ export const renderGarden = ({ profile, entries }, { assetVersion = '' } = {}) =
         ${profile.banner ? `<div class="profile-banner"><img src="${e(profile.banner)}" alt="" width="1500" height="500"></div>` : ''}
         <div class="profile-info">
           <div class="profile-identity"><a class="profile-avatar" href="${e(source)}" aria-label="${e(profile.displayName)} on Bluesky">${avatar(profile)}</a><div><h2 id="profile-title">${e(profile.displayName)}</h2><a class="profile-handle" href="${e(source)}">@${e(profile.handle)}</a></div></div>
-          <a class="profile-button" href="${e(source)}">View on Bluesky ${icon('arrow')}</a>
+          <a class="profile-button" href="${e(source)}">Engage on Bluesky ${icon('arrow')}</a>
           ${profile.description ? `<p class="profile-bio">${linkedText(profile.description)}</p>` : ''}
           <p class="garden-description">A garden of links, ideas, and discoveries. Collected on Bluesky with <span>#garden</span>.</p>
         </div>
