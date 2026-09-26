@@ -3,6 +3,7 @@ export const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, chara
 const e = escapeHtml;
 const icons = {
   garden: '<path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M5.6 18.4 18.4 5.6"/>',
+  github: '<path fill="currentColor" stroke="none" d="M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2.1c-3.13.68-3.79-1.33-3.79-1.33-.51-1.3-1.25-1.64-1.25-1.64-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.29-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.16-3.02-.12-.29-.5-1.43.11-2.98 0 0 .95-.3 3.1 1.15a10.83 10.83 0 0 1 5.63 0c2.15-1.46 3.09-1.15 3.09-1.15.61 1.55.23 2.69.11 2.98.72.79 1.16 1.79 1.16 3.02 0 4.32-2.63 5.27-5.14 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.25 11.25 0 0 0 12 .75Z"/>',
   all: '<rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/>',
   talks: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/>',
   papers: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M8 12h8M8 16h6"/>',
@@ -78,15 +79,8 @@ export const renderGarden = ({ profile, entries }) => {
 <body>
   <a class="skip-link" href="#collection">Skip to garden</a>
   <div class="shell">
-    <header class="site-nav">
-      <a class="brand" href="./" aria-label="Digital garden home">${icon('garden')}<span>#garden</span></a>
-      <nav aria-label="Navigation"><a class="nav-link current" href="./" aria-current="page">${icon('all')}Garden</a><a class="nav-link" href="${e(source)}">${icon('arrow')}Bluesky profile</a></nav>
-      <a class="create-garden" href="${templateUrl}">Create a garden</a>
-      <a class="nav-profile" href="${e(source)}">${avatar(profile)}<span><strong>${e(profile.displayName)}</strong><small>@${e(profile.handle)}</small></span></a>
-      <p class="nav-note">A little more room<br>for the things you love.</p>
-    </header>
     <main class="main-column">
-      <div class="page-header"><div><strong>Digital garden</strong><span>${entries.length} ${entries.length === 1 ? 'post' : 'posts'} collected</span></div><a href="${e(source)}" aria-label="Open @${e(profile.handle)} on Bluesky">${icon('arrow')}</a></div>
+      <header class="page-header"><div><a class="brand" href="./" aria-label="Digital garden home">${icon('garden')}<span>#garden</span></a><span class="header-count">${entries.length} ${entries.length === 1 ? 'post' : 'posts'} collected</span></div><a class="header-profile-link" href="${e(source)}" aria-label="Open @${e(profile.handle)} on Bluesky">${icon('arrow')}</a></header>
       <section class="profile-header" aria-labelledby="page-title">
         <div class="profile-banner">${profile.banner ? `<img src="${e(profile.banner)}" alt="" fetchpriority="high" width="1500" height="500">` : ''}</div>
         <div class="profile-info"><div class="profile-actions"><a class="profile-avatar" href="${e(source)}" aria-label="${e(profile.displayName)} on Bluesky">${avatar(profile)}</a><a class="profile-button" href="${e(source)}">View on Bluesky ${icon('arrow')}</a></div>
@@ -104,14 +98,15 @@ export const renderGarden = ({ profile, entries }) => {
         <ul class="entries" role="list">${entries.map((entry, i) => renderEntry(entry, i, profile)).join('')}</ul>
         <div class="empty-state" ${entries.length ? 'hidden' : ''}><span aria-hidden="true">${icon('garden')}</span><h3>${entries.length ? 'No posts found' : 'A little room to grow'}</h3><p>${entries.length ? 'Try another search or choose a different topic.' : 'Posts tagged #garden on Bluesky will appear here.'}</p><button type="button" class="empty-reset" ${entries.length ? '' : 'hidden'}>Show all posts</button></div>
       </section>
-      <footer>Grown on Bluesky. A garden of your own.<br><a href="${templateUrl}">Create your garden ${icon('arrow')}</a></footer>
+      <footer>Grown on Bluesky. A garden of your own.</footer>
     </main>
     <aside class="garden-sidebar" aria-label="About this garden">
       <div class="filters" aria-label="Filter by topic" hidden>${topics('')}</div>
-      <section class="about-garden"><h2>Post it. Keep it.</h2><p>Add <strong>#garden</strong> to a Bluesky post to give it a home here. Your other hashtags become topics.</p><a href="https://github.com/crs48/digitalgarden#make-it-yours">Make a garden of your own ${icon('arrow')}</a></section>
+      <section class="about-garden"><h2>Post it. Keep it.</h2><p>Add <strong>#garden</strong> to a Bluesky post to give it a home here. Your other hashtags become topics.</p></section>
       <p class="site-note">An independent garden, connected to Bluesky.<br><a href="https://github.com/crs48/digitalgarden">Open source</a></p>
     </aside>
   </div>
+  <a class="garden-badge" href="${templateUrl}" aria-label="Create your own garden on GitHub">${icon('github')}<span>Create your own garden</span></a>
 </body>
 </html>`;
 };
