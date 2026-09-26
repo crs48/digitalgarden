@@ -10,6 +10,7 @@ export const build = async () => {
   await cp('public', 'dist', { recursive: true });
   await cp('src/styles.css', 'dist/styles.css');
   await cp('src/garden.js', 'dist/garden.js');
+  await cp('src/masonry.js', 'dist/masonry.js');
   await cp('src/media.js', 'dist/media.js');
   await mkdir('dist/vendor', { recursive: true });
   await cp('node_modules/hls.js/dist/hls.light.min.mjs', 'dist/vendor/hls.light.mjs');

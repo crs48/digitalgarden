@@ -1,4 +1,11 @@
+import { setupMasonry } from './masonry.js';
+
 const list = document.querySelector('.entries');
+const layout = setupMasonry(list);
+const viewButtons = [...document.querySelectorAll('[data-view]')];
+const savedView = () => {
+  try { return localStorage.getItem('garden:view'); } catch { return null; }
+};
 const entries = [...document.querySelectorAll('[data-entry]')];
 const search = document.querySelector('#search');
 const category = document.querySelector('#category');
@@ -18,6 +25,7 @@ const readState = () => {
     tags: [...new Set(params.getAll('tag'))].filter(tag => knownTags.has(tag)),
     query: params.get('q') ?? '',
     sort: params.get('sort') === 'title' ? 'title' : 'newest',
+    view: (['feed', 'masonry'].includes(params.get('view')) ? params.get('view') : savedView()) === 'feed' ? 'feed' : 'masonry',
   };
 };
 let state = readState();
@@ -34,6 +42,9 @@ const update = (writeUrl = true) => {
   const sorted = [...entries].sort(compare);
   sorted.forEach(entry => { entry.hidden = !matches(entry, state); });
   if ([...list.children].some((entry, index) => entry !== sorted[index])) list.replaceChildren(...sorted);
+  list.dataset.layout = state.view;
+  viewButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === state.view)));
+  layout();
   const visible = entries.filter(entry => !entry.hidden).length;
   count.textContent = `${visible} ${visible === 1 ? 'post' : 'posts'}`;
   heading.firstChild.textContent = `${state.category || 'Garden'} `;
@@ -53,10 +64,16 @@ const update = (writeUrl = true) => {
     state.tags.forEach(tag => url.searchParams.append('tag', tag));
     if (state.query) url.searchParams.set('q', state.query);
     if (state.sort !== 'newest') url.searchParams.set('sort', state.sort);
+    url.searchParams.set('view', state.view);
     history.replaceState(null, '', url);
   }
 };
-const reset = () => { state = { category: '', tags: [], query: '', sort: 'newest' }; search.value = ''; sort.value = 'newest'; update(); };
+const reset = () => { state = { ...state, category: '', tags: [], query: '', sort: 'newest' }; search.value = ''; sort.value = 'newest'; update(); };
+viewButtons.forEach(button => button.addEventListener('click', () => {
+  state = { ...state, view: button.dataset.view };
+  try { localStorage.setItem('garden:view', state.view); } catch { /* The URL still preserves the view if storage is unavailable. */ }
+  update();
+}));
 category.addEventListener('change', () => { state = { ...state, category: category.value }; update(); });
 tagButtons.forEach(button => button.addEventListener('click', () => {
   const tag = button.dataset.tag;

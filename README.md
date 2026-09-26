@@ -59,6 +59,8 @@ Long titles are shortened while preserving the full text below. Title extraction
 
 Search covers titles, notes, links, formats, and hashtags. Multiple selected topics use **AND**. Search and filters are reflected in the URL so you can share a particular corner of your garden. Press `/` to search and Escape to clear the search box.
 
+The garden opens in a compact masonry view. Use the layout buttons beside the filters to switch between cards and the full feed. Your browser remembers your choice, and shared URLs preserve the view. Cards reflow as media loads or filters change, with a single column on small screens.
+
 ## How syncing works
 
 **Yes: posts are pulled in GitHub Actions, just before the build.** Every run fetches your public profile and posts, keeps the posts tagged `#garden`, saves a snapshot, builds the static site, and deploys it to GitHub Pages. Visitors read the built site; their browsers do not fetch your Bluesky feed.
@@ -119,7 +121,8 @@ The output is static HTML, CSS, and small scripts for filtering and media playba
 | `scripts/data.mjs` | Content and identity validation |
 | `scripts/render.mjs` | Profile, feed, and media rendering |
 | `src/styles.css` | Bluesky-inspired appearance and responsive layout |
-| `src/garden.js` | Search, format, topic, and sort controls |
+| `src/garden.js` | Search, format, topic, sort, and view controls |
+| `src/masonry.js` | Responsive card placement and media resizing |
 | `.github/workflows/pages.yml` | Import, build, and publish |
 
 Built with the [public Bluesky API](https://docs.bsky.app/) and [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages). This is an independent project, not an official Bluesky feature.

@@ -3,6 +3,8 @@ export const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, chara
 const e = escapeHtml;
 const icons = {
   garden: '<path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M5.6 18.4 18.4 5.6"/>',
+  feed: '<rect x="4" y="3" width="16" height="7" rx="2"/><rect x="4" y="14" width="16" height="7" rx="2"/>',
+  masonry: '<rect x="3" y="3" width="7" height="11" rx="1.5"/><rect x="14" y="3" width="7" height="6" rx="1.5"/><rect x="3" y="18" width="7" height="3" rx="1"/><rect x="14" y="13" width="7" height="8" rx="1.5"/>',
   github: '<path fill="currentColor" stroke="none" d="M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2.1c-3.13.68-3.79-1.33-3.79-1.33-.51-1.3-1.25-1.64-1.25-1.64-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.29-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.16-3.02-.12-.29-.5-1.43.11-2.98 0 0 .95-.3 3.1 1.15a10.83 10.83 0 0 1 5.63 0c2.15-1.46 3.09-1.15 3.09-1.15.61 1.55.23 2.69.11 2.98.72.79 1.16 1.79 1.16 3.02 0 4.32-2.63 5.27-5.14 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.25 11.25 0 0 0 12 .75Z"/>',
   all: '<rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/>',
   talks: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/>',
@@ -73,7 +75,7 @@ export const renderGarden = ({ profile, entries }) => {
   ${profile.avatar ? `<meta property="og:image" content="${e(profile.avatar)}">` : ''}
   <meta name="theme-color" content="#ffffff"><link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
-  <script src="./garden.js" defer></script><script src="./media.js" type="module"></script>
+  <script src="./garden.js" type="module"></script><script src="./media.js" type="module"></script>
 </head>
 <body>
   <a class="skip-link" href="#collection">Skip to garden</a>
@@ -96,10 +98,11 @@ export const renderGarden = ({ profile, entries }) => {
           ${tags.length ? `<div class="filter-tags" role="group" aria-label="Filter by topic">${tags.map(tagButton).join('')}</div>` : ''}
           <label class="sort"><span class="sr-only">Sort the collection</span><select id="sort"><option value="newest">Newest first</option><option value="title">Title, A–Z</option></select></label>
         </div>
+        <div class="view-switch" role="group" aria-label="View layout"><button type="button" data-view="feed" aria-label="Feed view" title="Feed view" aria-pressed="false">${icon('feed')}</button><button type="button" data-view="masonry" aria-label="Compact masonry view" title="Compact masonry view" aria-pressed="true">${icon('masonry')}</button></div>
       </div>
       <section id="collection" class="collection" aria-labelledby="collection-title" tabindex="-1">
         <div class="collection-heading"><h2 id="collection-title">Garden <span class="result-count" role="status" aria-live="polite">${entries.length} ${entries.length === 1 ? 'post' : 'posts'}</span></h2></div>
-        <ul class="entries" role="list">${entries.map((entry, i) => renderEntry(entry, i, profile)).join('')}</ul>
+        <ul class="entries" data-layout="masonry" role="list">${entries.map((entry, i) => renderEntry(entry, i, profile)).join('')}</ul>
         <div class="empty-state" ${entries.length ? 'hidden' : ''}><span aria-hidden="true">${icon('garden')}</span><h3>${entries.length ? 'No posts found' : 'A little room to grow'}</h3><p>${entries.length ? 'Try another search or choose a different topic.' : 'Posts tagged #garden on Bluesky will appear here.'}</p><button type="button" class="empty-reset" ${entries.length ? '' : 'hidden'}>Show all posts</button></div>
       </section>
       <footer>Grown on Bluesky. A garden of your own.</footer>
