@@ -14,6 +14,7 @@ export const canonicalUrl = value => {
 };
 
 const text = value => typeof value === 'string' && value.trim().length > 0;
+export const isDid = value => typeof value === 'string' && /^did:[a-z]+:[a-zA-Z0-9._:%-]+$/.test(value);
 const fail = (path, message) => { throw new Error(`${path}: ${message}`); };
 const optionalText = (object, keys, path) => keys.forEach(key => {
   if (object[key] !== undefined && !text(object[key])) fail(`${path}.${key}`, 'must be a non-empty string');
@@ -27,7 +28,7 @@ const allowedKeys = (object, keys, path) => Object.keys(object).forEach(key => {
 
 export const validateEntry = (entry, path = 'entry') => {
   if (!entry || typeof entry !== 'object' || Array.isArray(entry)) fail(path, 'must be an object');
-  allowedKeys(entry, ['title', 'url', 'category', 'note', 'tags', 'thumbnail', 'added', 'createdAt', 'source', 'media', 'links'], path);
+  allowedKeys(entry, ['title', 'url', 'category', 'note', 'tags', 'thumbnail', 'added', 'createdAt', 'source', 'media', 'links', 'mentions'], path);
   if (!text(entry.title)) fail(`${path}.title`, 'is required');
   if (!isWebUrl(entry.url)) fail(`${path}.url`, 'must be a full http(s) URL');
   optionalText(entry, ['category', 'note'], path);
@@ -36,6 +37,16 @@ export const validateEntry = (entry, path = 'entry') => {
   if (entry.createdAt !== undefined && (typeof entry.createdAt !== 'string' || Number.isNaN(Date.parse(entry.createdAt)))) fail(`${path}.createdAt`, 'must be a valid timestamp');
   if (entry.thumbnail !== undefined && !isWebUrl(entry.thumbnail)) fail(`${path}.thumbnail`, 'must be a full http(s) URL');
   if (entry.source !== undefined && !isWebUrl(entry.source)) fail(`${path}.source`, 'must be a full http(s) URL');
+  if (entry.mentions !== undefined) {
+    if (!Array.isArray(entry.mentions)) fail(`${path}.mentions`, 'must be a list');
+    entry.mentions.forEach((mention, i) => {
+      const field = `${path}.mentions[${i}]`;
+      if (!mention || typeof mention !== 'object' || Array.isArray(mention)) fail(field, 'must be an object');
+      allowedKeys(mention, ['handle', 'did'], field);
+      if (!isDid(mention.did)) fail(`${field}.did`, 'must be a Bluesky account DID');
+      if (normalizeHandle(mention.handle) !== mention.handle) fail(`${field}.handle`, 'must be a normalized Bluesky handle');
+    });
+  }
   if (entry.links !== undefined) {
     if (!Array.isArray(entry.links)) fail(`${path}.links`, 'must be a list');
     entry.links.forEach((link, i) => {
@@ -69,7 +80,7 @@ export const normalizeHandle = value => {
 };
 
 export const validateProfile = profile => {
-  if (!profile || typeof profile.did !== 'string' || !/^did:[a-z]+:[a-zA-Z0-9._:%-]+$/.test(profile.did)) fail('profile.did', 'Bluesky returned an invalid profile');
+  if (!profile || !isDid(profile.did)) fail('profile.did', 'Bluesky returned an invalid profile');
   const handle = normalizeHandle(profile.handle);
   return {
     did: profile.did, handle,

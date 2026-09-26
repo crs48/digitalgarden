@@ -14,6 +14,16 @@
       "url": "https://www.inkandswitch.com/essay/local-first",
       "category": "Links",
       "note": "this essay by @inkandswitch.com on local-first software has inspired me so much. it points at a technological promised land that @bsky.app and so many others are aiming at",
+      "mentions": [
+        {
+          "handle": "inkandswitch.com",
+          "did": "did:plc:hamnrbjmhrgouhtkaof5e2ar"
+        },
+        {
+          "handle": "bsky.app",
+          "did": "did:plc:z72i7hdynmk6r22z27h6tvur"
+        }
+      ],
       "tags": [
         "code"
       ],
@@ -77,6 +87,12 @@
       "url": "https://howtounclench.com",
       "category": "Links",
       "note": "how to unclench by @jmiller.bsky.social if you read just one long form post my vote is for this one",
+      "mentions": [
+        {
+          "handle": "jmiller.bsky.social",
+          "did": "did:plc:7wj6nj4v5dan3yfjkyij5egh"
+        }
+      ],
       "tags": [
         "yummy",
         "fun",

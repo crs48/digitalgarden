@@ -83,6 +83,8 @@ kbd { font-family: inherit; font-size: 12px; color: var(--muted); }
 .outbound { display: inline-block; margin-left: 6px; color: var(--muted); }
 .outbound svg { width: 12px; height: 12px; vertical-align: baseline; }
 .entry-note { max-width: 80ch; margin: 0 0 14px; font-size: 15px; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
+.mention { color: var(--accent); }
+.mention:hover { text-decoration: underline; }
 .entry-tags { display: flex; flex-wrap: wrap; gap: 2px 10px; margin-top: 12px; }
 .tag { padding: 2px 0; color: var(--accent); font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; text-align: left; }
 .tag:hover { text-decoration: underline; }

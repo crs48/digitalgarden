@@ -1,5 +1,6 @@
 import { isWebUrl, canonicalUrl, validateProfile, validateGarden } from './data.mjs';
 import { inferMedia } from './media.mjs';
+import { mentionsFromRecord } from './mentions.mjs';
 
 const hashtagList = record => [...new Set([
   ...(record.facets ?? []).flatMap(facet => facet.features ?? []).filter(feature => feature.$type === 'app.bsky.richtext.facet#tag').map(feature => feature.tag.toLowerCase()),
@@ -74,6 +75,7 @@ export const entriesFromFeed = (feed, actorDid) => feed.flatMap(item => {
   const primary = links[0];
   const fallback = external?.title?.trim() || (media.some(item => item.type === 'image') ? 'An image worth keeping' : media.length ? 'Something worth playing' : 'A thought worth keeping');
   const { title, note } = titleFromCopy(cleanCopy(record, tags), fallback);
+  const mentions = mentionsFromRecord(record);
   const categoryTag = tags.find(tag => Object.hasOwn(categoryTags, tag));
   const format = media.some(item => ['youtube', 'vimeo', 'video'].includes(item.type)) ? 'Videos'
     : media.some(item => ['audio', 'spotify', 'soundcloud'].includes(item.type)) ? 'Audio'
@@ -82,6 +84,7 @@ export const entriesFromFeed = (feed, actorDid) => feed.flatMap(item => {
     title, url: primary?.url ?? source,
     category: categoryTag ? categoryTags[categoryTag] : format,
     ...(note ? { note } : {}),
+    ...(mentions.length ? { mentions } : {}),
     tags: tags.filter(tag => tag !== 'garden'),
     ...(isWebUrl(external?.thumb) ? { thumbnail: external.thumb } : {}),
     ...(links.length ? { links } : {}),

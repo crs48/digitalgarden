@@ -57,6 +57,8 @@ A small reminder to notice what is already here.
 
 Long titles are shortened while preserving the full text below. Title extraction does not require an AI service or API key. Players never autoplay, and every entry links back to its original Bluesky post for the conversation.
 
+@mentions link to Bluesky profiles in titles and post text. Imported mentions retain the account's Bluesky ID so their links keep working after a handle change. Plain handles and mentions in the profile bio link by handle.
+
 Search covers titles, notes, links, formats, and hashtags. Multiple selected topics use **AND**. Search and filters are reflected in the URL so you can share a particular corner of your garden. Press `/` to search and Escape to clear the search box.
 
 The garden opens in a compact masonry view. Use the layout buttons beside the filters to switch between cards and the full feed. Your browser remembers your choice, and shared URLs preserve the view. Cards reflow as media loads or filters change, with a single column on small screens.
