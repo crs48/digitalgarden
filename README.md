@@ -2,7 +2,7 @@
 
 Your Bluesky profile, with a little more room for the things you love. Post with **#garden** to collect links, ideas, images, videos, and audio in a garden of your own. Every other hashtag becomes a topic you can browse.
 
-**[Visit the garden](https://crs48.github.io/digitalgarden/)**
+**[Visit the garden](https://crs.garden/) · [Public repository](https://github.com/crs48/digitalgarden)**
 
 Your avatar, banner, display name, bio, and posts all come from Bluesky. There is no YAML collection, manual content editor, account to create, or app password to manage. The site is static and hosted on GitHub Pages.
 
