@@ -18,6 +18,7 @@ const icons = {
   'tv shows': '<rect x="3" y="6" width="18" height="14" rx="2"/><path d="m8 2 4 4 4-4"/>',
   links: '<path d="m10 13 4-4M8 16l-1 1a3.5 3.5 0 0 1-5-5l5-5a3.5 3.5 0 0 1 5 0M16 8l1-1a3.5 3.5 0 0 1 5 5l-5 5a3.5 3.5 0 0 1-5 0"/>',
   search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
+  close: '<path d="m6 6 12 12M6 18 18 6"/>',
   arrow: '<path d="M5 19 19 5M5 5h14v14"/>',
 };
 export const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name.toLowerCase()] ?? icons[{ videos: 'talks', notes: 'essays' }[name.toLowerCase()]] ?? icons.links}</svg>`;
@@ -103,8 +104,8 @@ export const renderGarden = ({ profile, entries }, { assetVersion = '' } = {}) =
       </section>
       <div class="collection-toolbar" hidden>
         <div class="filter-strip" role="region" aria-label="Garden filters" tabindex="0">
+          <div class="search" data-expanded="false"><button type="button" id="search-toggle" aria-label="Search garden" title="Search garden (/)" aria-expanded="false" aria-controls="search-field">${icon('search')}</button><div id="search-field" class="search-field" hidden><input id="search" type="search" placeholder="Search" aria-label="Search the collection" autocomplete="off"><button type="button" id="search-close" aria-label="Close search and clear query" title="Close search (Esc)">${icon('close')}</button></div></div>
           <label class="format-filter"><span class="sr-only">Filter by format</span><select id="category">${categoryOption('', 'All posts', entries.length)}${categories.map(category => categoryOption(category, category, entries.filter(entry => entry.category === category).length)).join('')}</select></label>
-          <label class="search">${icon('search')}<input id="search" type="search" placeholder="Search garden" aria-label="Search the collection" autocomplete="off"><kbd aria-hidden="true">/</kbd></label>
           <button type="button" id="clear-filters" hidden>Clear filters <span aria-hidden="true">×</span></button>
           ${tags.length ? `<div class="filter-tags" role="group" aria-label="Filter by topic">${tags.map(tagButton).join('')}</div>` : ''}
           <label class="sort"><span class="sr-only">Sort the collection</span><select id="sort"><option value="newest">Newest first</option><option value="title">Title, A–Z</option></select></label>

@@ -8,6 +8,19 @@ const savedView = () => {
 };
 const entries = [...document.querySelectorAll('[data-entry]')];
 const search = document.querySelector('#search');
+const searchControl = document.querySelector('.search');
+const searchToggle = document.querySelector('#search-toggle');
+const searchField = document.querySelector('#search-field');
+const setSearchExpanded = expanded => {
+  searchControl.dataset.expanded = String(expanded);
+  searchToggle.setAttribute('aria-expanded', String(expanded));
+  searchField.hidden = !expanded;
+};
+const openSearch = () => {
+  setSearchExpanded(true);
+  search.focus();
+  searchControl.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+};
 const category = document.querySelector('#category');
 const sort = document.querySelector('#sort');
 const count = document.querySelector('.result-count');
@@ -68,7 +81,16 @@ const update = (writeUrl = true) => {
     history.replaceState(null, '', url);
   }
 };
-const reset = () => { state = { ...state, category: '', tags: [], query: '', sort: 'newest' }; search.value = ''; sort.value = 'newest'; update(); };
+const reset = () => { state = { ...state, category: '', tags: [], query: '', sort: 'newest' }; search.value = ''; sort.value = 'newest'; setSearchExpanded(false); update(); };
+const closeSearch = () => {
+  search.value = '';
+  state = { ...state, query: '' };
+  setSearchExpanded(false);
+  update();
+  searchToggle.focus();
+};
+searchToggle.addEventListener('click', openSearch);
+document.querySelector('#search-close').addEventListener('click', closeSearch);
 viewButtons.forEach(button => button.addEventListener('click', () => {
   state = { ...state, view: button.dataset.view };
   try { localStorage.setItem('garden:view', state.view); } catch { /* The URL still preserves the view if storage is unavailable. */ }
@@ -85,16 +107,17 @@ sort.addEventListener('change', () => { state = { ...state, sort: sort.value }; 
 clear.addEventListener('click', reset);
 document.querySelector('.empty-reset').addEventListener('click', reset);
 document.addEventListener('keydown', event => {
-  if (event.key === '/' && !event.metaKey && !event.ctrlKey && !event.altKey && !event.target.closest('input, textarea, select, [contenteditable]')) { event.preventDefault(); search.focus(); }
-  if (event.key === 'Escape' && event.target === search) { search.value = ''; state = { ...state, query: '' }; update(); search.blur(); }
+  if (event.key === '/' && !event.metaKey && !event.ctrlKey && !event.altKey && !event.target.closest('input, textarea, select, [contenteditable]')) { event.preventDefault(); openSearch(); }
+  if (event.key === 'Escape' && searchControl.contains(event.target)) { event.preventDefault(); closeSearch(); }
 });
-window.addEventListener('popstate', () => { state = readState(); search.value = state.query; sort.value = state.sort; update(false); });
+window.addEventListener('popstate', () => { state = readState(); search.value = state.query; sort.value = state.sort; setSearchExpanded(Boolean(state.query)); update(false); });
 document.querySelectorAll('.entry-image img').forEach(img => {
   const hideBroken = () => { img.closest('.entry-image').hidden = true; };
   img.addEventListener('error', hideBroken);
   if (img.complete && !img.naturalWidth) hideBroken();
 });
 search.value = state.query;
+setSearchExpanded(Boolean(state.query));
 sort.value = state.sort;
 document.querySelector('.collection-toolbar').hidden = false;
 update(false);
