@@ -161,7 +161,7 @@ npm run build     # output in dist/
 
 If the default port is busy, use `PORT=4318 npm run dev`. The preview also serves `/digitalgarden/` to check project-site paths.
 
-The build uses the YAML parser. A self-hosted HLS.js player loads on demand only when a visitor plays a streaming video; native HLS is the fallback when Media Source Extensions are unavailable. The output is static HTML, CSS, and a small script for filtering. Links and notes work without JavaScript. No accounts, database, analytics, or client-side Bluesky requests. Google Fonts provides DM Sans and Instrument Serif, with system-font fallbacks; remote images and embedded players are loaded from their source hosts. YouTube uses its privacy-enhanced domain. Self-host these assets if you prefer no third-party requests.
+The build uses the YAML parser. A self-hosted HLS.js player loads on demand only when a visitor plays a streaming video; native HLS is the fallback when Media Source Extensions are unavailable. The output is static HTML, CSS, and a small script for filtering. Links and notes work without JavaScript. No accounts, database, analytics, or client-side Bluesky requests. Google Fonts provides Inter, with system-font fallbacks; remote images and embedded players are loaded from their source hosts. YouTube uses its privacy-enhanced domain. Self-host these assets if you prefer no third-party requests.
 
 | File | Purpose |
 | --- | --- |
