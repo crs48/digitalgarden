@@ -1,5 +1,67 @@
 [
   {
+    "title": "Strolling under the Skin might be my favorite video on the internet. don't watch it if…",
+    "url": "https://www.youtube.com/watch?v=eW0lvOVKDxE",
+    "category": "Videos",
+    "note": "Strolling under the Skin might be my favorite video on the internet. don't watch it if you're squeamish, but if you have a body and have ever wondered how it moves 😘",
+    "tags": [
+      "body",
+      "fascia"
+    ],
+    "thumbnail": "https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreibpgq5sq2tuzvyipw7zd26yhhibfyc4od3rhnfsgmdhsihuwwjloa",
+    "links": [
+      {
+        "url": "https://www.youtube.com/watch?v=eW0lvOVKDxE",
+        "title": "Strolling under the Skin"
+      }
+    ],
+    "media": [
+      {
+        "type": "youtube",
+        "url": "https://www.youtube.com/watch?v=eW0lvOVKDxE"
+      }
+    ],
+    "added": "2026-09-26",
+    "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf4x6vox22q"
+  },
+  {
+    "title": "My favorite paper Out of the Tar Pit distinguishes between accidental and essential…",
+    "url": "https://curtclifton.net/papers/MoseleyMarks06a.pdf",
+    "category": "Links",
+    "note": "my favorite paper Out of the Tar Pit distinguishes between accidental and essential complexity. such a good read!",
+    "tags": [
+      "code"
+    ],
+    "links": [
+      {
+        "url": "https://curtclifton.net/papers/MoseleyMarks06a.pdf",
+        "title": "curtclifton.net"
+      }
+    ],
+    "added": "2026-09-26",
+    "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf4psjp3s2q"
+  },
+  {
+    "title": "How to unclench by @jmiller.bsky.social if you read just one long form post my vote is…",
+    "url": "https://howtounclench.com",
+    "category": "Links",
+    "note": "how to unclench by @jmiller.bsky.social if you read just one long form post my vote is for this one",
+    "tags": [
+      "yummy",
+      "fun",
+      "xrisk"
+    ],
+    "thumbnail": "https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreid3675mcltjanauvr75maa2ruesfwgtnpuvrf2pdgycjplji2iqny",
+    "links": [
+      {
+        "url": "https://howtounclench.com",
+        "title": "How to Unclench"
+      }
+    ],
+    "added": "2026-09-26",
+    "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf4jf5aqc2q"
+  },
+  {
     "title": "Another fantastic Rich Hickey talk Simple Made Easy",
     "url": "https://www.youtube.com/watch?v=SxdOUGdseq4",
     "category": "Videos",
