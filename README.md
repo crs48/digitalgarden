@@ -63,7 +63,7 @@ Search covers titles, notes, links, formats, and hashtags. Multiple selected top
 
 The format and sort menus support arrow keys, typing an option's name, and Enter to select. Escape closes a menu without changing your selection.
 
-The garden opens in a compact masonry view. Use the layout buttons beside the filters to switch between cards and the full feed. Your browser remembers your choice, and shared URLs preserve the view. Cards reflow as media loads or filters change, with a single column on small screens.
+The garden defaults to compact masonry whenever the URL does not specify a view. Use the layout buttons beside the filters to switch between cards and the full feed; shared URLs preserve the chosen view. Cards reflow as media loads or filters change, with a single column on small screens.
 
 ## How syncing works
 

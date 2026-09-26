@@ -4,9 +4,6 @@ import { setupDropdown } from './dropdown.js';
 const list = document.querySelector('.entries');
 const layout = setupMasonry(list);
 const viewButtons = [...document.querySelectorAll('[data-view]')];
-const savedView = () => {
-  try { return localStorage.getItem('garden:view'); } catch { return null; }
-};
 const entries = [...document.querySelectorAll('[data-entry]')];
 const search = document.querySelector('#search');
 const searchControl = document.querySelector('.search');
@@ -40,7 +37,7 @@ const readState = () => {
     tags: [...new Set(params.getAll('tag'))].filter(tag => knownTags.has(tag)),
     query: params.get('q') ?? '',
     sort: params.get('sort') === 'title' ? 'title' : 'newest',
-    view: (['feed', 'masonry'].includes(params.get('view')) ? params.get('view') : savedView()) === 'feed' ? 'feed' : 'masonry',
+    view: params.get('view') === 'feed' ? 'feed' : 'masonry',
   };
 };
 let state = readState();
@@ -98,7 +95,6 @@ searchToggle.addEventListener('click', openSearch);
 document.querySelector('#search-close').addEventListener('click', closeSearch);
 viewButtons.forEach(button => button.addEventListener('click', () => {
   state = { ...state, view: button.dataset.view };
-  try { localStorage.setItem('garden:view', state.view); } catch { /* The URL still preserves the view if storage is unavailable. */ }
   update();
 }));
 category.addEventListener('change', () => { state = { ...state, category: category.value }; update(); });
