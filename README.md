@@ -61,6 +61,8 @@ Long titles are shortened while preserving the full text below. Title extraction
 
 Search covers titles, notes, links, formats, and hashtags. Multiple selected topics use **AND**. Search and filters are reflected in the URL so you can share a particular corner of your garden. Click the search icon at the left of the filter bar or press `/` to expand search. Escape clears the query and closes the search box.
 
+The format and sort menus support arrow keys, typing an option's name, and Enter to select. Escape closes a menu without changing your selection.
+
 The garden opens in a compact masonry view. Use the layout buttons beside the filters to switch between cards and the full feed. Your browser remembers your choice, and shared URLs preserve the view. Cards reflow as media loads or filters change, with a single column on small screens.
 
 ## How syncing works
@@ -124,6 +126,7 @@ The output is static HTML, CSS, and small scripts for filtering and media playba
 | `scripts/render.mjs` | Profile, feed, and media rendering |
 | `src/styles.css` | Bluesky-inspired appearance and responsive layout |
 | `src/garden.js` | Search, format, topic, sort, and view controls |
+| `src/dropdown.js` | Accessible format and sort menus |
 | `src/masonry.js` | Responsive card placement and media resizing |
 | `.github/workflows/pages.yml` | Import, build, and publish |
 

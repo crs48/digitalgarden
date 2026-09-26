@@ -1,4 +1,5 @@
 import { setupMasonry } from './masonry.js';
+import { setupDropdown } from './dropdown.js';
 
 const list = document.querySelector('.entries');
 const layout = setupMasonry(list);
@@ -23,6 +24,7 @@ const openSearch = () => {
 };
 const category = document.querySelector('#category');
 const sort = document.querySelector('#sort');
+const syncDropdowns = [category, sort].map(setupDropdown);
 const count = document.querySelector('.result-count');
 const heading = document.querySelector('#collection-title');
 const clear = document.querySelector('#clear-filters');
@@ -66,8 +68,11 @@ const update = (writeUrl = true) => {
   categoryOptions.forEach(option => {
     const total = entries.filter(entry => matches(entry, { ...state, category: option.value })).length;
     option.textContent = `${option.dataset.label} (${total})`;
+    option.dataset.count = total;
   });
   category.value = state.category;
+  sort.value = state.sort;
+  syncDropdowns.forEach(sync => sync());
   tagButtons.forEach(button => button.setAttribute('aria-pressed', String(state.tags.includes(button.dataset.tag))));
   document.dispatchEvent(new Event('garden:filter'));
   if (writeUrl) {

@@ -19,10 +19,20 @@ const icons = {
   links: '<path d="m10 13 4-4M8 16l-1 1a3.5 3.5 0 0 1-5-5l5-5a3.5 3.5 0 0 1 5 0M16 8l1-1a3.5 3.5 0 0 1 5 5l-5 5a3.5 3.5 0 0 1-5 0"/>',
   search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
   close: '<path d="m6 6 12 12M6 18 18 6"/>',
+  chevron: '<path d="m7 10 5 5 5-5"/>',
+  check: '<path d="m5 12 4 4L19 6"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  alphabet: '<path d="m3 15 4-10 4 10M5 11h4M14 5h7l-7 10h7M4 20h16"/>',
   arrow: '<path d="M5 19 19 5M5 5h14v14"/>',
 };
 export const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name.toLowerCase()] ?? icons[{ videos: 'talks', notes: 'essays' }[name.toLowerCase()]] ?? icons.links}</svg>`;
 const tagButton = tag => `<button type="button" class="tag" data-tag="${e(tag)}" aria-pressed="false">#${e(tag)}</button>`;
+const dropdown = (id, label, options) => `<div class="dropdown ${id === 'category' ? 'format-filter' : 'sort'}" data-dropdown>
+  <label class="sr-only" id="${id}-label" for="${id}">${e(label)}</label>
+  <select id="${id}">${options.map(option => `<option value="${e(option.value)}" data-label="${e(option.label)}"${option.count === undefined ? '' : ` data-count="${option.count}"`}>${e(option.label)}${option.count === undefined ? '' : ` (${option.count})`}</option>`).join('')}</select>
+  <button type="button" class="dropdown-trigger" id="${id}-trigger" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="${id}-menu" aria-labelledby="${id}-label ${id}-value" hidden><span id="${id}-value" class="dropdown-value"></span><span class="dropdown-chevron">${icon('chevron')}</span></button>
+  <div class="dropdown-menu" id="${id}-menu" role="listbox" aria-labelledby="${id}-label" hidden>${options.map((option, index) => `<div class="dropdown-option" id="${id}-option-${index}" role="option" aria-selected="false" data-value="${e(option.value)}"><span class="dropdown-option-icon">${icon(option.icon)}</span><span class="dropdown-option-label">${e(option.label)}</span>${option.count === undefined ? '' : `<span class="dropdown-count">${option.count}</span>`}<span class="dropdown-check">${icon('check')}</span></div>`).join('')}</div>
+</div>`;
 const domain = url => new URL(url).hostname.replace(/^www\./, '');
 const externalLink = (url, label) => `<a href="${e(url)}" target="_blank" rel="noopener noreferrer">${e(label)} ${icon('arrow')}<span class="sr-only"> (opens in a new tab)</span></a>`;
 const renderMedia = (media, entry, index) => {
@@ -74,7 +84,7 @@ export const renderGarden = ({ profile, entries }, { assetVersion = '' } = {}) =
   const categories = [...new Set(entries.map(entry => entry.category))].sort((a, b) => a.localeCompare(b));
   const tags = [...new Set(entries.flatMap(entry => entry.tags))].sort((a, b) => a.localeCompare(b));
   const source = profileUrl(profile);
-  const categoryOption = (category, label, count) => `<option value="${e(category)}" data-label="${e(label)}">${e(label)} (${count})</option>`;
+  const formats = [{ value: '', label: 'All posts', count: entries.length, icon: 'all' }, ...categories.map(category => ({ value: category, label: category, count: entries.filter(entry => entry.category === category).length, icon: category }))];
   const templateUrl = 'https://github.com/crs48/digitalgarden/generate';
   const description = `The digital garden of @${profile.handle}. Links, ideas, and discoveries collected on Bluesky with #garden.`;
   return `<!doctype html>
@@ -105,10 +115,10 @@ export const renderGarden = ({ profile, entries }, { assetVersion = '' } = {}) =
       <div class="collection-toolbar" hidden>
         <div class="filter-strip" role="region" aria-label="Garden filters" tabindex="0">
           <div class="search" data-expanded="false"><button type="button" id="search-toggle" aria-label="Search garden" title="Search garden (/)" aria-expanded="false" aria-controls="search-field">${icon('search')}</button><div id="search-field" class="search-field" hidden><input id="search" type="search" placeholder="Search" aria-label="Search the collection" autocomplete="off"><button type="button" id="search-close" aria-label="Close search and clear query" title="Close search (Esc)">${icon('close')}</button></div></div>
-          <label class="format-filter"><span class="sr-only">Filter by format</span><select id="category">${categoryOption('', 'All posts', entries.length)}${categories.map(category => categoryOption(category, category, entries.filter(entry => entry.category === category).length)).join('')}</select></label>
+          ${dropdown('category', 'Filter by format', formats)}
           <button type="button" id="clear-filters" hidden>Clear filters <span aria-hidden="true">×</span></button>
           ${tags.length ? `<div class="filter-tags" role="group" aria-label="Filter by topic">${tags.map(tagButton).join('')}</div>` : ''}
-          <label class="sort"><span class="sr-only">Sort the collection</span><select id="sort"><option value="newest">Newest first</option><option value="title">Title, A–Z</option></select></label>
+          ${dropdown('sort', 'Sort the collection', [{ value: 'newest', label: 'Newest first', icon: 'clock' }, { value: 'title', label: 'Title, A–Z', icon: 'alphabet' }])}
         </div>
         <div class="view-switch" role="group" aria-label="View layout"><button type="button" data-view="feed" aria-label="Feed view" title="Feed view" aria-pressed="false">${icon('feed')}</button><button type="button" data-view="masonry" aria-label="Compact masonry view" title="Compact masonry view" aria-pressed="true">${icon('masonry')}</button></div>
       </div>
