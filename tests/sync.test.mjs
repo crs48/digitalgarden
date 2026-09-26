@@ -59,11 +59,11 @@ test('sync refreshes engagement counts in both directions and preserves them dur
   };
   await syncGarden({ handle: profile.handle, filename, fetchJson: api([counted(1, 2)]) });
   await syncGarden({ handle: profile.handle, filename, fetchJson: api([counted(3, 7)]) });
-  let [entry] = (await readGarden(filename)).entries;
+  let [entry] = (await readGarden(filename, profile.handle)).entries;
   assert.equal(entry.replyCount, 3);
   assert.equal(entry.likeCount, 7);
   await syncGarden({ handle: profile.handle, filename, fetchJson: api([counted(0, 0)]) });
-  [entry] = (await readGarden(filename)).entries;
+  [entry] = (await readGarden(filename, profile.handle)).entries;
   assert.equal(entry.replyCount, 0);
   assert.equal(entry.likeCount, 0);
   const previous = await readFile(filename, 'utf8');
