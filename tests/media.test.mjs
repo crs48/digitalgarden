@@ -2,14 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { entriesFromFeed, titleFromCopy } from '../scripts/bluesky.mjs';
 import { inferMedia, providerEmbed } from '../scripts/media.mjs';
-import { validateConfig, validateEntry, mergeEntries } from '../scripts/data.mjs';
+import { validateEntry } from '../scripts/data.mjs';
 import { renderGarden } from '../scripts/render.mjs';
 
-const site = { title: 'Garden', owner: 'Someone', heading: 'A collection', description: 'Things to keep' };
-const settings = validateConfig({ site, entries: [], bluesky: { categoryTags: { paper: 'Papers' } } }).bluesky;
+const profile = { did: 'did:plc:example', handle: 'example.bsky.social', displayName: 'Someone', description: 'Things to keep' };
 const did = 'did:plc:example';
 const item = (text, embed, extra = {}) => ({ post: { uri: `at://${did}/app.bsky.feed.post/one`, author: { did }, record: { text, createdAt: '2026-09-25T12:00:00Z', ...extra }, embed } });
-const importOne = (text, embed, extra) => entriesFromFeed([item(text, embed, extra)], settings, did)[0];
+const importOne = (text, embed, extra) => entriesFromFeed([item(text, embed, extra)], did)[0];
 
 test('every marked text post becomes an entry with all other hashtags', () => {
   const entry = importOne('A thought about attention.\nRoom to slow down. #garden #body #spirituality #paper');
@@ -24,7 +23,7 @@ test('marked replies are collected but unmarked posts and reposts are not', () =
   assert.equal(importOne('Worth saving #garden', undefined, { reply: {} }).category, 'Notes');
   assert.equal(importOne('Not marked #gardening'), undefined);
   assert.equal(importOne('A URL fragment https://example.com/?topic=#garden'), undefined);
-  assert.equal(entriesFromFeed([{ ...item('#garden'), reason: { $type: 'repost' } }], settings, did).length, 0);
+  assert.equal(entriesFromFeed([{ ...item('#garden'), reason: { $type: 'repost' } }], did).length, 0);
 });
 test('titles use standalone headings, sentences, and preview fallbacks without losing copy', () => {
   assert.deepEqual(titleFromCopy('Small observations\n\nThe body learns slowly.', 'fallback'), { title: 'Small observations', note: 'The body learns slowly.' });
@@ -79,14 +78,6 @@ test('multiple media links stay together in one post and infer their format', ()
   assert.equal(entry.links.length, 2);
   assert.equal(entry.media.length, 2);
 });
-test('post identity preserves distinct notes about the same link and refreshes existing posts', () => {
-  const a = { title: 'One note', url: 'https://example.com', source: 'https://bsky.app/profile/a/post/one' };
-  const b = { ...a, title: 'Another note', source: 'https://bsky.app/profile/a/post/two' };
-  assert.equal(mergeEntries([a, b], []).length, 2);
-  assert.deepEqual(mergeEntries([{ ...a, title: 'Updated' }], [a, b]).map(entry => entry.title), ['Updated', 'Another note']);
-  assert.equal(mergeEntries([{ title: 'Curated', url: a.url }], [a, b]).length, 1);
-  assert.equal(mergeEntries([], [a, b], [a.source]).length, 1);
-});
 test('media validation rejects arbitrary frames, script URLs, attributes, and invalid dimensions', () => {
   const base = { title: 'Test', url: 'https://example.com' };
   for (const media of [
@@ -104,7 +95,7 @@ test('rendering includes native controls, readable captions, alt text, and fallb
     { type: 'video', url: 'https://media.test/playlist.m3u8', loop: true },
     { type: 'youtube', url: 'https://youtu.be/abcdefghijk' },
   ] })];
-  const html = renderGarden(validateConfig({ site, entries: [] }), entries);
+  const html = renderGarden({ profile, entries });
   assert.match(html, /alt="A &lt;diagram&gt;"/);
   assert.match(html, /<audio controls preload="none"/);
   assert.match(html, /loop muted/);

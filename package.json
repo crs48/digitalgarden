@@ -2,7 +2,7 @@
   "name": "digitalgarden",
   "version": "1.0.0",
   "private": true,
-  "description": "A quiet, YAML-powered digital garden for GitHub Pages.",
+  "description": "A Bluesky-powered digital garden. Collect posts with #garden and publish on GitHub Pages.",
   "type": "module",
   "engines": {
     "node": ">=22"
@@ -15,7 +15,6 @@
     "check": "npm test && npm run build"
   },
   "dependencies": {
-    "hls.js": "^1.7.3",
-    "yaml": "^2.9.1"
+    "hls.js": "^1.7.3"
   }
 }

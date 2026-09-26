@@ -17,7 +17,7 @@ const icons = {
   arrow: '<path d="M5 19 19 5M5 5h14v14"/>',
 };
 export const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name.toLowerCase()] ?? icons[{ videos: 'talks', notes: 'essays' }[name.toLowerCase()]] ?? icons.links}</svg>`;
-const tagButton = tag => `<button type="button" class="tag" data-tag="${e(tag)}" aria-pressed="false">${e(tag.replaceAll('-', ' '))}</button>`;
+const tagButton = tag => `<button type="button" class="tag" data-tag="${e(tag)}" aria-pressed="false">#${e(tag)}</button>`;
 const domain = url => new URL(url).hostname.replace(/^www\./, '');
 const externalLink = (url, label) => `<a href="${e(url)}" target="_blank" rel="noopener noreferrer">${e(label)} ${icon('arrow')}<span class="sr-only"> (opens in a new tab)</span></a>`;
 const renderMedia = (media, entry, index) => {
@@ -32,64 +32,85 @@ const renderMedia = (media, entry, index) => {
   const audio = ['spotify', 'soundcloud'].includes(provider.type);
   return `<figure class="media-panel media-embed${audio ? ' media-embed-audio' : ''}"><iframe src="${e(provider.src)}" title="${e(`${provider.label}: ${entry.title}`)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><figcaption><span>${audio ? 'Listen' : 'Watch'} on ${e(provider.label)}</span>${externalLink(media.url, 'Open original')}</figcaption></figure>`;
 };
-const renderEntry = (entry, index) => {
+const profileUrl = profile => `https://bsky.app/profile/${profile.did}`;
+const avatar = (profile, className = '') => `<span class="avatar ${className}">${profile.avatar ? `<img src="${e(profile.avatar)}" alt="" width="96" height="96" loading="lazy">` : `<span aria-hidden="true">${e(profile.displayName.slice(0, 1).toUpperCase())}</span>`}</span>`;
+const linkedText = text => text.split(/(https?:\/\/[^\s<>]+)/g).map(part => /^https?:\/\//.test(part) ? `<a href="${e(part)}" target="_blank" rel="noopener noreferrer">${e(part.replace(/^https?:\/\//, ''))}</a>` : e(part)).join('');
+const renderEntry = (entry, index, profile) => {
   const media = entryMedia(entry);
   const linked = (entry.links ?? []).filter(link => !media.some(item => item.url === link.url));
   const rich = media.length > 0 || linked.length > 0;
-  return `<li class="entry${rich ? ' entry-rich' : ''}${entry.category === 'Notes' ? ' entry-thought' : ''}" data-entry="${index}" data-category="${e(entry.category)}" data-tags="${e(JSON.stringify(entry.tags))}" data-added="${e(entry.added ?? '')}" data-title="${e(entry.title)}" data-search="${e([entry.title, entry.creator, entry.note, entry.category, entry.url, ...(entry.links ?? []).map(link => link.title), ...entry.tags].filter(Boolean).join(' ').toLowerCase())}">
+  const titleRepeatsNote = entry.title.endsWith('…') && entry.note?.toLowerCase().startsWith(entry.title.slice(0, -1).toLowerCase());
+  return `<li class="entry${rich ? ' entry-rich' : ''}${entry.category === 'Notes' ? ' entry-thought' : ''}" data-entry="${index}" data-category="${e(entry.category)}" data-tags="${e(JSON.stringify(entry.tags))}" data-added="${e(entry.createdAt ?? entry.added ?? '')}" data-title="${e(entry.title)}" data-search="${e([entry.title, entry.note, entry.category, entry.url, ...(entry.links ?? []).map(link => link.title), ...entry.tags].filter(Boolean).join(' ').toLowerCase())}">
+  <a class="entry-avatar" href="${e(profileUrl(profile))}" aria-label="${e(profile.displayName)} on Bluesky">${avatar(profile)}</a>
   <article class="entry-body">
-    <div class="entry-meta"><span>${e(entry.category)}</span>${entry.creator ? `<span>${e(entry.creator)}</span>` : ''}${entry.year ? `<span>${entry.year}</span>` : ''}${entry.source && entry.added ? `<time datetime="${e(entry.added)}">${e(new Date(`${entry.added}T12:00:00Z`).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }))}</time>` : ''}${entry.example ? '<span class="example-label">Example</span>' : ''}</div>
-    <h3><a href="${e(entry.url)}" target="_blank" rel="noopener noreferrer">${e(entry.title)}<span class="outbound">${icon('arrow')}<span class="sr-only"> (opens in a new tab)</span></span></a></h3>
+    <div class="entry-meta"><a class="entry-author" href="${e(profileUrl(profile))}">${e(profile.displayName)}</a><span class="entry-handle">@${e(profile.handle)}</span>${entry.added ? `<a class="entry-date" href="${e(entry.source)}"><time datetime="${e(entry.createdAt ?? entry.added)}">${e(new Date(`${entry.added}T12:00:00Z`).toLocaleDateString('en', { month: 'short', day: 'numeric', timeZone: 'UTC' }))}</time></a>` : ''}</div>
+    ${titleRepeatsNote ? `<h3 class="sr-only">${e(entry.title)}</h3>` : `<h3><a href="${e(entry.url)}" target="_blank" rel="noopener noreferrer">${e(entry.title)}<span class="outbound">${icon('arrow')}<span class="sr-only"> (opens in a new tab)</span></span></a></h3>`}
     ${entry.note ? `<p class="entry-note">${e(entry.note)}</p>` : ''}
     ${media.length ? `<div class="entry-media${media.every(item => item.type === 'image') && media.length > 1 ? ' image-gallery' : ''}">${media.map((item, i) => renderMedia(item, entry, i)).join('')}</div>` : ''}
     ${linked.length ? `<div class="entry-links">${linked.map((link, i) => `<a class="link-preview" href="${e(link.url)}" target="_blank" rel="noopener noreferrer">${i === 0 && entry.thumbnail ? `<img src="${e(entry.thumbnail)}" alt="" width="72" height="72" loading="lazy">` : ''}<span><strong>${e(link.title)}</strong><small>${e(domain(link.url))}</small></span>${icon('arrow')}<span class="sr-only"> (opens in a new tab)</span></a>`).join('')}</div>` : ''}
-    <div class="entry-bottom"><div class="entry-tags">${entry.tags.map(tagButton).join('')}</div><span class="entry-domain">${e(domain(entry.url))}</span>${entry.source ? `<a class="source-link" href="${e(entry.source)}" target="_blank" rel="noopener noreferrer">via Bluesky<span class="sr-only"> (opens in a new tab)</span></a>` : ''}</div>
+    ${entry.tags.length ? `<div class="entry-tags">${entry.tags.map(tagButton).join('')}</div>` : ''}
+    <div class="entry-bottom"><span class="entry-format">${icon(entry.category)}${e(entry.category)}</span><a class="source-link" href="${e(entry.source)}" target="_blank" rel="noopener noreferrer">View post on Bluesky ${icon('arrow')}<span class="sr-only"> (opens in a new tab)</span></a></div>
   </article>
   ${entry.thumbnail && !rich ? `<div class="entry-image"><img src="${e(entry.thumbnail)}" alt="" width="88" height="88" loading="lazy" referrerpolicy="no-referrer"></div>` : ''}
 </li>`;
 };
 
-export const renderGarden = (config, entries) => {
-  const { site, bluesky } = config;
-  const categories = [...new Set([...config.categories, ...entries.map(entry => entry.category)])];
+export const renderGarden = ({ profile, entries }) => {
+  const categories = [...new Set(entries.map(entry => entry.category))].sort((a, b) => a.localeCompare(b));
   const tags = [...new Set(entries.flatMap(entry => entry.tags))].sort((a, b) => a.localeCompare(b));
-  const categoryButton = (category, label, count) => `<button class="category${category === '' ? ' selected' : ''}" type="button" data-category-filter="${e(category)}" aria-pressed="${category === ''}"><span>${icon(category || 'all')}${e(label)}</span><span class="category-count">${String(count).padStart(2, '0')}</span></button>`;
+  const source = profileUrl(profile);
+  const categoryButton = (category, label, count) => `<button class="category${category === '' ? ' selected' : ''}" type="button" data-category-filter="${e(category)}" aria-pressed="${category === ''}"><span>${e(label)}</span><span class="category-count">${count}</span></button>`;
+  const topics = className => tags.length ? `<details class="topics ${className}" open><summary>Topics <span>${tags.length}</span></summary><div class="topic-tags">${tags.map(tagButton).join('')}</div></details>` : '';
+  const templateUrl = 'https://github.com/crs48/digitalgarden/generate';
+  const description = `The digital garden of @${profile.handle}. Links, ideas, and discoveries collected on Bluesky with #garden.`;
   return `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${e(site.title)} — ${e(site.owner)}</title>
-  <meta name="description" content="${e(site.description)}">
-  <meta property="og:title" content="${e(site.title)} — ${e(site.owner)}"><meta property="og:description" content="${e(site.description)}"><meta property="og:type" content="website">
+  <title>${e(profile.displayName)}’s garden · @${e(profile.handle)}</title>
+  <meta name="description" content="${e(description)}">
+  <meta property="og:title" content="${e(profile.displayName)}’s garden"><meta property="og:description" content="${e(description)}"><meta property="og:type" content="website">
+  ${profile.avatar ? `<meta property="og:image" content="${e(profile.avatar)}">` : ''}
   <meta name="theme-color" content="#ffffff"><link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css"><style>:root{--accent:${site.accent}}</style>
-  <script src="./garden.js" defer></script>
-  <script src="./media.js" type="module"></script>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./garden.js" defer></script><script src="./media.js" type="module"></script>
 </head>
 <body>
-  <a class="skip-link" href="#collection">Skip to collection</a>
+  <a class="skip-link" href="#collection">Skip to garden</a>
   <div class="shell">
-    <header class="site-header"><a class="brand" href="./" aria-label="${e(site.title)} home"><span class="brand-mark" aria-hidden="true">${icon('garden')}</span><span><span class="brand-owner">${e(site.owner)}</span><span class="brand-divider">/</span><strong>${e(site.title)}</strong></span></a>
-      <nav class="header-links" aria-label="Elsewhere">${site.home ? `<a href="${e(site.home)}">About ${e(site.owner)} ${icon('arrow')}</a>` : ''}${bluesky.handle ? `<a href="https://bsky.app/profile/${e(bluesky.handle)}">Bluesky ${icon('arrow')}</a>` : ''}</nav>
+    <header class="site-nav">
+      <a class="brand" href="./" aria-label="Digital garden home">${icon('garden')}<span>#garden</span></a>
+      <nav aria-label="Navigation"><a class="nav-link current" href="./" aria-current="page">${icon('all')}Garden</a><a class="nav-link" href="${e(source)}">${icon('arrow')}Bluesky profile</a></nav>
+      <a class="create-garden" href="${templateUrl}">Create a garden</a>
+      <a class="nav-profile" href="${e(source)}">${avatar(profile)}<span><strong>${e(profile.displayName)}</strong><small>@${e(profile.handle)}</small></span></a>
+      <p class="nav-note">A little more room<br>for the things you love.</p>
     </header>
-    <main>
-      <section class="intro" aria-labelledby="page-title"><div><p class="eyebrow">A personal collection</p><h1 id="page-title">${e(site.heading)}</h1><p class="intro-description">${e(site.description)}</p></div><span class="intro-count">${icon('all')}<strong>${entries.length}</strong> things collected</span></section>
-      <div class="garden-layout">
-        <aside class="filters" aria-label="Filter collection" hidden>
-          <div class="filter-section"><h2>Collection</h2><div class="categories">${categoryButton('', 'Everything', entries.length)}${categories.map(category => categoryButton(category, category, entries.filter(entry => entry.category === category).length)).join('')}</div></div>
-          ${tags.length ? `<details class="filter-section topics" open><summary>Topics <span>${tags.length} topics</span></summary><div class="topic-tags">${tags.map(tagButton).join('')}</div></details>` : ''}
-        </aside>
-        <section id="collection" class="collection" aria-labelledby="collection-title" tabindex="-1">
-          <div class="collection-tools" hidden><label class="search">${icon('search')}<input id="search" type="search" placeholder="Search the collection" aria-label="Search the collection" autocomplete="off"><kbd aria-hidden="true">/</kbd></label><label class="sort"><span class="sr-only">Sort the collection</span><select id="sort"><option value="curated">Collection order</option><option value="newest">Newest additions</option><option value="title">Title, A–Z</option></select></label></div>
-          <div class="collection-heading"><h2 id="collection-title">The collection <span class="result-count" role="status" aria-live="polite">${entries.length} ${entries.length === 1 ? 'item' : 'items'}</span></h2><button type="button" id="clear-filters" hidden>Clear filters <span aria-hidden="true">×</span></button></div>
-          <div id="active-filters" class="active-filters" hidden></div>
-          ${entries.length && entries.every(entry => entry.example) ? '<p class="example-notice"><span>Starter collection</span> Example links to make your own.</p>' : ''}
-          <ul class="entries" role="list">${entries.map(renderEntry).join('')}</ul>
-          <div class="empty-state" ${entries.length ? 'hidden' : ''}><span aria-hidden="true">∅</span><h3>${entries.length ? 'A little room for discovery.' : 'Every garden starts somewhere.'}</h3><p>${entries.length ? 'No items match these filters. Try another word or follow a different thread.' : 'The first links will appear here soon.'}</p><button type="button" class="empty-reset" ${entries.length ? '' : 'hidden'}>Show everything</button></div>
-        </section>
-      </div>
+    <main class="main-column">
+      <div class="page-header"><div><strong>Digital garden</strong><span>${entries.length} ${entries.length === 1 ? 'post' : 'posts'} collected</span></div><a href="${e(source)}" aria-label="Open @${e(profile.handle)} on Bluesky">${icon('arrow')}</a></div>
+      <section class="profile-header" aria-labelledby="page-title">
+        <div class="profile-banner">${profile.banner ? `<img src="${e(profile.banner)}" alt="" fetchpriority="high" width="1500" height="500">` : ''}</div>
+        <div class="profile-info"><div class="profile-actions"><a class="profile-avatar" href="${e(source)}" aria-label="${e(profile.displayName)} on Bluesky">${avatar(profile)}</a><a class="profile-button" href="${e(source)}">View on Bluesky ${icon('arrow')}</a></div>
+          <h1 id="page-title">${e(profile.displayName)}</h1><a class="profile-handle" href="${e(source)}">@${e(profile.handle)}</a>
+          ${profile.description ? `<p class="profile-bio">${linkedText(profile.description)}</p>` : ''}
+          <p class="garden-description">A garden of links, ideas, and discoveries.<br>Collected on Bluesky with <span>#garden</span>.</p>
+        </div>
+      </section>
+      <section id="collection" class="collection" aria-labelledby="collection-title" tabindex="-1">
+        <div class="categories" aria-label="Filter by format" hidden>${categoryButton('', 'All posts', entries.length)}${categories.map(category => categoryButton(category, category, entries.filter(entry => entry.category === category).length)).join('')}</div>
+        <div class="collection-tools" hidden><label class="search">${icon('search')}<input id="search" type="search" placeholder="Search this garden" aria-label="Search the collection" autocomplete="off"><kbd aria-hidden="true">/</kbd></label><label class="sort"><span class="sr-only">Sort the collection</span><select id="sort"><option value="newest">Newest first</option><option value="title">Title, A–Z</option></select></label></div>
+        <div class="mobile-topics" hidden>${topics('')}</div>
+        <div class="collection-heading"><h2 id="collection-title">Garden <span class="result-count" role="status" aria-live="polite">${entries.length} ${entries.length === 1 ? 'post' : 'posts'}</span></h2><button type="button" id="clear-filters" hidden>Clear filters <span aria-hidden="true">×</span></button></div>
+        <div id="active-filters" class="active-filters" hidden></div>
+        <ul class="entries" role="list">${entries.map((entry, i) => renderEntry(entry, i, profile)).join('')}</ul>
+        <div class="empty-state" ${entries.length ? 'hidden' : ''}><span aria-hidden="true">${icon('garden')}</span><h3>${entries.length ? 'No posts found' : 'A little room to grow'}</h3><p>${entries.length ? 'Try another search or choose a different topic.' : 'Posts tagged #garden on Bluesky will appear here.'}</p><button type="button" class="empty-reset" ${entries.length ? '' : 'hidden'}>Show all posts</button></div>
+      </section>
+      <footer>Grown on Bluesky. A garden of your own.<br><a href="${templateUrl}">Create your garden ${icon('arrow')}</a></footer>
     </main>
-    <footer><p>A small corner of the internet, tended by ${e(site.owner)}.</p>${site.repository ? `<a href="${e(site.repository)}">Make a garden of your own ${icon('arrow')}</a>` : ''}</footer>
+    <aside class="garden-sidebar" aria-label="About this garden">
+      <div class="filters" aria-label="Filter by topic" hidden>${topics('')}</div>
+      <section class="about-garden"><h2>Post it. Keep it.</h2><p>Add <strong>#garden</strong> to a Bluesky post to give it a home here. Your other hashtags become topics.</p><a href="https://github.com/crs48/digitalgarden#make-it-yours">Make a garden of your own ${icon('arrow')}</a></section>
+      <p class="site-note">An independent garden, connected to Bluesky.<br><a href="https://github.com/crs48/digitalgarden">Open source</a></p>
+    </aside>
   </div>
 </body>
 </html>`;

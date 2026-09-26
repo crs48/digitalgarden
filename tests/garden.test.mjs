@@ -1,108 +1,113 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { canonicalUrl, validateConfig, validateEntry, mergeEntries } from '../scripts/data.mjs';
+import { canonicalUrl, normalizeHandle, validateProfile, validateGarden, validateEntry } from '../scripts/data.mjs';
 import { renderGarden } from '../scripts/render.mjs';
-import { entriesFromFeed, collectFeed } from '../scripts/bluesky.mjs';
+import { entriesFromFeed, collectFeed, gardenFromFeed } from '../scripts/bluesky.mjs';
 
-const minimal = () => ({ site: { title: 'Garden', owner: 'Someone', heading: 'Worth keeping', description: 'A personal collection.' }, entries: [] });
-const link = (overrides = {}) => ({ title: 'A resource', url: 'https://example.com/resource', ...overrides });
-const config = () => validateConfig({ ...minimal(), bluesky: { enabled: true, handle: 'example.bsky.social', hashtag: 'garden', categoryTags: { paper: 'Papers' } } }).bluesky;
 const did = 'did:plc:example';
+const profile = { did, handle: 'example.bsky.social', displayName: 'Someone', description: 'Things to keep.' };
+const source = `https://bsky.app/profile/${did}/post/abc`;
+const link = (overrides = {}) => ({ title: 'A resource', url: 'https://example.com/resource', source, ...overrides });
+const snapshot = (entries = []) => ({ version: 1, profile, entries });
 const feedItem = (overrides = {}) => ({ post: { uri: `at://${did}/app.bsky.feed.post/abc`, author: { did }, record: { text: 'A useful idea #garden #paper #distributed-data', createdAt: '2026-09-25T12:00:00.000Z' }, embed: { external: { uri: 'https://example.com/paper', title: 'A good paper', description: 'A description', thumb: 'https://example.com/cover.png' } }, ...overrides } });
 
-test('minimal entries and arbitrary categories are supported', () => {
-  const validated = validateConfig({ ...minimal(), entries: [link({ category: 'Podcasts', tags: ['body', 'body'] })] });
-  assert.equal(validated.entries[0].category, 'Podcasts');
-  assert.deepEqual(validated.entries[0].tags, ['body']);
-  assert.equal(validateEntry(link()).category, 'Links');
+test('handles accept an optional @ and reject URLs and malformed hosts', () => {
+  assert.equal(normalizeHandle(' @Example.BSKY.social '), profile.handle);
+  for (const value of ['', 'https://bsky.app/profile/test', 'bad handle', '-bad.test', 'test..social', 'just-a-name']) assert.throws(() => normalizeHandle(value), /BLUESKY_HANDLE/);
 });
-test('configuration typos fail with actionable paths', () => {
-  assert.throws(() => validateConfig({ ...minimal(), entires: [] }), /garden.yaml.entires: unknown/);
-  assert.throws(() => validateConfig({ ...minimal(), entries: [link({ thumnail: 'x' })] }), /entries\[0\].thumnail/);
+test('profiles use public identity and safely fall back for missing profile fields', () => {
+  assert.deepEqual(validateProfile({ did, handle: profile.handle, avatar: 'javascript:alert(1)', viewer: { following: 'secret' } }), { did, handle: profile.handle, displayName: profile.handle, description: '' });
+  assert.throws(() => validateProfile({ handle: profile.handle }), /invalid profile/);
 });
-test('unsafe links, images, dates, and injected colors are rejected', () => {
+test('a snapshot cannot publish another account or manually sourced entries', () => {
+  assert.throws(() => validateGarden(snapshot(), 'another.bsky.social'), /does not match/);
+  assert.throws(() => validateGarden(snapshot([link({ source: undefined })])), /source/);
+  assert.throws(() => validateGarden(snapshot([link({ source: 'https://bsky.app/profile/did:plc:other/post/abc' })])), /source/);
+  assert.throws(() => validateGarden(snapshot([link(), link()])), /duplicate Bluesky/);
+  assert.equal(validateGarden(snapshot([link()]), '@example.bsky.social').entries.length, 1);
+});
+test('unknown content fields and unsafe links, images, dates, and media fail validation', () => {
+  assert.throws(() => validateEntry(link({ thumnail: 'x' })), /unknown/);
   for (const url of ['javascript:alert(1)', 'data:text/html,x', '//example.com']) assert.throws(() => validateEntry(link({ url })), /url/);
   for (const thumbnail of ['javascript:alert(1)', 'images/../../secret', '//tracking.example/pixel']) assert.throws(() => validateEntry(link({ thumbnail })), /thumbnail/);
   for (const added of ['2026-02-30', 'yesterday', '2026-9-2']) assert.throws(() => validateEntry(link({ added })), /added/);
-  assert.throws(() => validateConfig({ ...minimal(), site: { ...minimal().site, accent: '#000000}</style>' } }), /accent/);
 });
 test('canonical links remove tracking but preserve content identity', () => {
   assert.equal(canonicalUrl('https://example.com/a/?utm_source=b&a=1&fbclid=x#section'), 'https://example.com/a/?a=1#section');
   assert.notEqual(canonicalUrl('https://example.com/?id=1'), canonicalUrl('https://example.com/?id=2'));
   assert.notEqual(canonicalUrl('https://example.com/#one'), canonicalUrl('https://example.com/#two'));
 });
-test('curated links keep their order and override imports without duplicates', () => {
-  const manual = [link({ title: 'First', url: 'https://example.com/first' }), link({ title: 'Edited title' })];
-  const imported = [link({ title: 'Imported title', url: 'https://example.com/resource?utm_source=bsky' }), link({ url: 'https://example.com/another' })];
-  assert.deepEqual(mergeEntries(manual, imported).map(entry => entry.title), ['First', 'Edited title', 'A resource']);
-  assert.equal(mergeEntries(manual, imported, ['https://example.com/resource']).length, 2);
-});
-test('HTML escapes author content and keeps relative GitHub Pages asset paths', () => {
-  const html = renderGarden(validateConfig(minimal()), [validateEntry(link({ title: '<script>alert(1)</script>', note: '"quoted" & <text>', tags: ['</button>'] }))]);
+test('HTML escapes profile and post content and keeps GitHub Pages asset paths', () => {
+  const garden = validateGarden({ ...snapshot([link({ title: '<script>alert(1)</script>', note: '"quoted" & <text>', tags: ['</button>'] })]), profile: { ...profile, displayName: '<script>name</script>', description: '<bio> https://example.com/?a=1&b=2' } });
+  const html = renderGarden(garden);
   assert.ok(!html.includes('<script>alert(1)</script>'));
+  assert.ok(!html.includes('<script>name</script>'));
   assert.match(html, /&lt;script&gt;/);
   assert.match(html, /href="\.\/styles.css"/);
   assert.match(html, /src="\.\/garden.js"/);
   assert.match(html, /rel="noopener noreferrer"/);
+  assert.match(html, /https:\/\/example.com\/\?a=1&amp;b=2/);
 });
-test('empty gardens render a real empty state', () => {
-  const html = renderGarden(validateConfig(minimal()), []);
-  assert.match(html, /Every garden starts somewhere/);
+test('empty gardens show a useful prompt without samples or empty format tabs', () => {
+  const html = renderGarden(snapshot());
+  assert.match(html, /Posts tagged #garden on Bluesky will appear here/);
   assert.ok(!html.includes('Starter collection'));
+  assert.ok(!html.includes('data-category-filter="Books"'));
 });
-test('Bluesky imports metadata, category, tags, notes, and provenance', () => {
-  const [entry] = entriesFromFeed([feedItem()], config(), did);
+test('imports retain title, category, all other tags, media, date, and source', () => {
+  const [entry] = entriesFromFeed([feedItem()], did);
   assert.equal(entry.title, 'A useful idea');
   assert.equal(entry.category, 'Papers');
   assert.deepEqual(entry.tags, ['paper', 'distributed-data']);
-  assert.equal(entry.note, undefined);
   assert.equal(entry.links[0].title, 'A good paper');
-  assert.equal(entry.added, '2026-09-25');
   assert.equal(entry.thumbnail, 'https://example.com/cover.png');
-  assert.equal(entry.source, `https://bsky.app/profile/${did}/post/abc`);
+  assert.equal(entry.createdAt, '2026-09-25T12:00:00.000Z');
+  assert.equal(entry.source, source);
 });
-test('only explicitly marked original posts are included by default', () => {
+test('only the owner’s marked posts are included, including explicitly marked replies', () => {
   const original = feedItem();
   const items = [
     { ...original, reason: { $type: 'app.bsky.feed.defs#reasonRepost' } },
     feedItem({ author: { did: 'did:plc:someone-else' } }),
+    feedItem({ record: { ...original.post.record, text: 'An unmarked link https://example.com' } }),
     feedItem({ record: { ...original.post.record, text: 'An unmarked reply', reply: {} } }),
     feedItem({ record: { ...original.post.record, text: '#gardening is different' } }),
   ];
-  assert.deepEqual(entriesFromFeed(items, config(), did), []);
-  assert.equal(entriesFromFeed([items[3]], { ...config(), mode: 'all-links' }, did).length, 1);
+  assert.deepEqual(entriesFromFeed(items, did), []);
+  assert.equal(entriesFromFeed([feedItem({ record: { ...original.post.record, reply: {} } })], did).length, 1);
 });
-test('link facets respect UTF-8 offsets and multiple links', () => {
+test('UTF-8 facets preserve multiple links and non-ASCII copy', () => {
   const text = '🌱 café https://a.test/one and https://b.test/two #garden';
   const facet = url => ({ index: { byteStart: Buffer.byteLength(text.slice(0, text.indexOf(url))), byteEnd: Buffer.byteLength(text.slice(0, text.indexOf(url) + url.length)) }, features: [{ $type: 'app.bsky.richtext.facet#link', uri: url }] });
-  const item = feedItem({ embed: undefined, record: { text, createdAt: '2026-09-25T00:00:00Z', facets: [facet('https://a.test/one'), facet('https://b.test/two')] } });
-  const entries = entriesFromFeed([item], config(), did);
-  assert.equal(entries.length, 1);
-  assert.equal(entries[0].links.length, 2);
-  assert.equal(entries[0].title, '🌱 café and');
-  assert.equal(entries[0].links[0].title, 'a.test');
+  const [entry] = entriesFromFeed([feedItem({ embed: undefined, record: { text, createdAt: '2026-09-25T00:00:00Z', facets: [facet('https://a.test/one'), facet('https://b.test/two')] } })], did);
+  assert.equal(entry.links.length, 2);
+  assert.equal(entry.title, '🌱 café and');
 });
 test('record-with-media embeds and case-insensitive tags work', () => {
   const original = feedItem();
   const item = feedItem({ record: { ...original.post.record, text: 'Something #Garden #Paper' }, embed: { media: original.post.embed } });
-  assert.equal(entriesFromFeed([item], config(), did)[0].category, 'Papers');
+  assert.equal(entriesFromFeed([item], did)[0].category, 'Papers');
 });
-test('excluded links and invalid dates cannot enter the archive', () => {
-  assert.deepEqual(entriesFromFeed([feedItem()], { ...config(), excludeUrls: ['https://example.com/paper?utm_source=abc'] }, did), []);
-  assert.deepEqual(entriesFromFeed([feedItem({ record: { text: '#garden https://a.test', createdAt: 'bad' } })], config(), did), []);
+test('a full feed snapshot deduplicates repeated posts and sorts by timestamp within a day', () => {
+  const older = feedItem();
+  const newer = feedItem({ uri: `at://${did}/app.bsky.feed.post/newer`, record: { text: 'A newer note #garden', createdAt: '2026-09-25T23:00:00Z' } });
+  const garden = gardenFromFeed({ profile, feed: [older, newer, older] });
+  assert.deepEqual(garden.entries.map(entry => entry.title), ['A newer note', 'A useful idea']);
+  assert.equal(gardenFromFeed({ profile, feed: [] }).entries.length, 0);
 });
-test('pagination follows all pages using the resolved DID', async () => {
+test('pagination follows every page using the resolved DID and preserves profile identity', async () => {
   const calls = [];
-  const result = await collectFeed('example.bsky.social', async (method, params) => {
+  const result = await collectFeed(profile.handle, async (method, params) => {
     calls.push({ method, params });
-    if (method.endsWith('getProfile')) return { did };
+    if (method.endsWith('getProfile')) return profile;
     return params.cursor ? { feed: [feedItem()] } : { feed: [feedItem()], cursor: 'page2' };
   });
   assert.equal(result.feed.length, 2);
+  assert.deepEqual(result.profile, profile);
   assert.equal(calls[1].params.actor, did);
   assert.equal(calls[2].params.cursor, 'page2');
 });
-test('pagination and API failures stop before replacing saved content', async () => {
-  await assert.rejects(collectFeed('example.bsky.social', async method => method.endsWith('getProfile') ? { did } : { feed: [], cursor: 'repeated' }), /repeated/);
-  await assert.rejects(collectFeed('example.bsky.social', async method => method.endsWith('getProfile') ? { did } : { error: 'unavailable' }), /invalid feed/);
+test('invalid feed responses and repeated cursors fail instead of truncating the garden', async () => {
+  await assert.rejects(collectFeed(profile.handle, async method => method.endsWith('getProfile') ? profile : { feed: [], cursor: 'repeated' }), /repeated/);
+  await assert.rejects(collectFeed(profile.handle, async method => method.endsWith('getProfile') ? profile : { error: 'unavailable' }), /invalid feed/);
 });

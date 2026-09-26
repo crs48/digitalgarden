@@ -1,4 +1,4 @@
-import { isWebUrl, canonicalUrl } from './data.mjs';
+import { isWebUrl, canonicalUrl, validateProfile, validateGarden } from './data.mjs';
 import { inferMedia } from './media.mjs';
 
 const hashtagList = record => [...new Set([
@@ -50,54 +50,48 @@ const attachedMedia = post => {
   return [];
 };
 
-export const entriesFromFeed = (feed, config, actorDid) => feed.flatMap(item => {
+const categoryTags = { talk: 'Talks', video: 'Videos', paper: 'Papers', essay: 'Essays', book: 'Books', movie: 'Movies', tv: 'TV shows', image: 'Images', audio: 'Audio', note: 'Notes' };
+
+export const entriesFromFeed = (feed, actorDid) => feed.flatMap(item => {
   const { post } = item;
   if (!post || item.reason || post.author?.did !== actorDid) return [];
   const record = post.record;
   if (!record || typeof record.text !== 'string' || Number.isNaN(Date.parse(record.createdAt))) return [];
   const tags = hashtagList(record);
-  const marked = tags.includes(config.hashtag.toLowerCase());
-  if (config.mode !== 'all-links' && !marked) return [];
-  if (record.reply && !marked) return [];
+  if (!tags.includes('garden')) return [];
   const rkey = post.uri?.split('/').at(-1);
-  if (!rkey) return [];
+  if (!rkey || post.uri !== `at://${actorDid}/app.bsky.feed.post/${rkey}`) return [];
   const source = `https://bsky.app/profile/${actorDid}/post/${encodeURIComponent(rkey)}`;
   const external = externalEmbed(post);
   const facetLinks = (record.facets ?? []).flatMap(facet => facet.features ?? []).filter(feature => feature.$type === 'app.bsky.richtext.facet#link').map(feature => feature.uri);
   const rawLinks = [...record.text.matchAll(/https?:\/\/[^\s<>]+/g)].map(match => match[0].replace(/[.,;!?)]+$/, ''));
   const urls = [...new Set([external?.uri, ...facetLinks, ...(facetLinks.length ? [] : rawLinks)].filter(isWebUrl).map(canonicalUrl))];
-  const excluded = new Set(config.excludeUrls.map(canonicalUrl));
-  if (excluded.has(canonicalUrl(source))) return [];
-  const links = urls.filter(url => !excluded.has(canonicalUrl(url))).map(url => ({
+  const links = urls.map(url => ({
     url,
     title: external?.uri && isWebUrl(external.uri) && canonicalUrl(external.uri) === url && external.title?.trim() ? external.title.trim() : new URL(url).hostname.replace(/^www\./, ''),
   }));
-  if (urls.length && !links.length) return [];
-  if (config.mode === 'all-links' && !marked && !links.length) return [];
   const media = [...attachedMedia(post), ...links.map(link => inferMedia(link.url)).filter(Boolean)];
   const primary = links[0];
   const fallback = external?.title?.trim() || (media.some(item => item.type === 'image') ? 'An image worth keeping' : media.length ? 'Something worth playing' : 'A thought worth keeping');
   const { title, note } = titleFromCopy(cleanCopy(record, tags), fallback);
-  const categoryTags = Object.fromEntries(Object.entries(config.categoryTags).map(([key, value]) => [key.toLowerCase(), value]));
   const categoryTag = tags.find(tag => Object.hasOwn(categoryTags, tag));
   const format = media.some(item => ['youtube', 'vimeo', 'video'].includes(item.type)) ? 'Videos'
     : media.some(item => ['audio', 'spotify', 'soundcloud'].includes(item.type)) ? 'Audio'
-      : media.some(item => item.type === 'image') ? 'Images' : !links.length ? 'Notes' : config.defaultCategory;
+      : media.some(item => item.type === 'image') ? 'Images' : !links.length ? 'Notes' : 'Links';
   return [{
     title, url: primary?.url ?? source,
     category: categoryTag ? categoryTags[categoryTag] : format,
     ...(note ? { note } : {}),
-    tags: tags.filter(tag => tag !== config.hashtag.toLowerCase()),
+    tags: tags.filter(tag => tag !== 'garden'),
     ...(isWebUrl(external?.thumb) ? { thumbnail: external.thumb } : {}),
     ...(links.length ? { links } : {}),
     ...(media.length ? { media } : {}),
-    added: new Date(record.createdAt).toISOString().slice(0, 10), source,
+    added: new Date(record.createdAt).toISOString().slice(0, 10), createdAt: new Date(record.createdAt).toISOString(), source,
   }];
 });
 
 export const collectFeed = async (actor, fetchJson) => {
-  const profile = await fetchJson('app.bsky.actor.getProfile', { actor });
-  if (typeof profile.did !== 'string' || !profile.did.startsWith('did:')) throw new Error('Bluesky returned an invalid profile');
+  const profile = validateProfile(await fetchJson('app.bsky.actor.getProfile', { actor }));
   const pages = [];
   const seen = new Set();
   let cursor;
@@ -105,10 +99,18 @@ export const collectFeed = async (actor, fetchJson) => {
     const response = await fetchJson('app.bsky.feed.getAuthorFeed', { actor: profile.did, limit: '100', filter: 'posts_with_replies', ...(cursor ? { cursor } : {}) });
     if (!Array.isArray(response.feed)) throw new Error('Bluesky returned an invalid feed');
     pages.push(...response.feed);
-    if (!response.cursor) return { feed: pages, did: profile.did };
+    if (!response.cursor) return { feed: pages, did: profile.did, profile };
     if (seen.has(response.cursor)) throw new Error('Bluesky repeated a pagination cursor; existing entries were kept');
     seen.add(response.cursor);
     cursor = response.cursor;
   }
   throw new Error('Feed exceeded 5,000 posts. Existing entries were kept; increase the pagination limit to backfill more.');
+};
+
+// A successful complete scan replaces the snapshot. Deleted or unmarked posts leave the garden.
+export const gardenFromFeed = ({ profile, feed }) => {
+  const posts = entriesFromFeed(feed, profile.did);
+  const entries = [...new Map(posts.map(entry => [entry.source, entry])).values()]
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.source.localeCompare(a.source));
+  return validateGarden({ version: 1, profile, entries });
 };

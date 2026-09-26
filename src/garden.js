@@ -11,19 +11,19 @@ const categoryButtons = [...document.querySelectorAll('[data-category-filter]')]
 const tagButtons = [...document.querySelectorAll('[data-tag]')];
 const knownCategories = new Set(categoryButtons.map(button => button.dataset.categoryFilter));
 const knownTags = new Set(tagButtons.map(button => button.dataset.tag));
-const topics = document.querySelector('.topics');
+const topics = [...document.querySelectorAll('.topics')];
 const mobile = matchMedia('(max-width: 680px)');
-if (topics) {
-  topics.open = !mobile.matches;
-  mobile.addEventListener('change', event => { topics.open = !event.matches; });
-}
+topics.forEach(topic => {
+  topic.open = !mobile.matches;
+  mobile.addEventListener('change', event => { topic.open = !event.matches; });
+});
 const readState = () => {
   const params = new URLSearchParams(location.search);
   return {
     category: knownCategories.has(params.get('category')) ? params.get('category') : '',
     tags: [...new Set(params.getAll('tag'))].filter(tag => knownTags.has(tag)),
     query: params.get('q') ?? '',
-    sort: ['curated', 'newest', 'title'].includes(params.get('sort')) ? params.get('sort') : 'curated',
+    sort: params.get('sort') === 'title' ? 'title' : 'newest',
   };
 };
 let state = readState();
@@ -34,29 +34,28 @@ const matches = (entry, current) => {
     && current.query.toLowerCase().trim().split(/\s+/).every(word => entry.dataset.search.includes(word));
 };
 const compare = (a, b) => state.sort === 'title' ? a.dataset.title.localeCompare(b.dataset.title)
-  : state.sort === 'newest' ? b.dataset.added.localeCompare(a.dataset.added) || Number(a.dataset.entry) - Number(b.dataset.entry)
-    : Number(a.dataset.entry) - Number(b.dataset.entry);
+  : b.dataset.added.localeCompare(a.dataset.added) || Number(a.dataset.entry) - Number(b.dataset.entry);
 
 const update = (writeUrl = true) => {
   const sorted = [...entries].sort(compare);
   sorted.forEach(entry => { entry.hidden = !matches(entry, state); });
   if ([...list.children].some((entry, index) => entry !== sorted[index])) list.replaceChildren(...sorted);
   const visible = entries.filter(entry => !entry.hidden).length;
-  count.textContent = `${visible} ${visible === 1 ? 'item' : 'items'}`;
-  heading.firstChild.textContent = `${state.category || 'The collection'} `;
+  count.textContent = `${visible} ${visible === 1 ? 'post' : 'posts'}`;
+  heading.firstChild.textContent = `${state.category || 'Garden'} `;
   empty.hidden = visible > 0;
   clear.hidden = !state.category && !state.tags.length && !state.query;
   categoryButtons.forEach(button => {
     const selected = button.dataset.categoryFilter === state.category;
     button.classList.toggle('selected', selected);
     button.setAttribute('aria-pressed', String(selected));
-    button.querySelector('.category-count').textContent = String(entries.filter(entry => matches(entry, { ...state, category: button.dataset.categoryFilter })).length).padStart(2, '0');
+    button.querySelector('.category-count').textContent = String(entries.filter(entry => matches(entry, { ...state, category: button.dataset.categoryFilter })).length);
   });
   tagButtons.forEach(button => button.setAttribute('aria-pressed', String(state.tags.includes(button.dataset.tag))));
   active.replaceChildren(...state.tags.map(tag => {
     const button = document.createElement('button');
     button.className = 'active-tag';
-    button.textContent = `${tag.replaceAll('-', ' ')} ×`;
+    button.textContent = `#${tag} ×`;
     button.setAttribute('aria-label', `Remove ${tag.replaceAll('-', ' ')} filter`);
     button.addEventListener('click', () => { state = { ...state, tags: state.tags.filter(value => value !== tag) }; update(); });
     return button;
@@ -69,11 +68,11 @@ const update = (writeUrl = true) => {
     if (state.category) url.searchParams.set('category', state.category);
     state.tags.forEach(tag => url.searchParams.append('tag', tag));
     if (state.query) url.searchParams.set('q', state.query);
-    if (state.sort !== 'curated') url.searchParams.set('sort', state.sort);
+    if (state.sort !== 'newest') url.searchParams.set('sort', state.sort);
     history.replaceState(null, '', url);
   }
 };
-const reset = () => { state = { category: '', tags: [], query: '', sort: 'curated' }; search.value = ''; sort.value = 'curated'; update(); };
+const reset = () => { state = { category: '', tags: [], query: '', sort: 'newest' }; search.value = ''; sort.value = 'newest'; update(); };
 categoryButtons.forEach(button => button.addEventListener('click', () => { state = { ...state, category: button.dataset.categoryFilter }; update(); }));
 tagButtons.forEach(button => button.addEventListener('click', () => {
   const tag = button.dataset.tag;
@@ -97,5 +96,7 @@ document.querySelectorAll('.entry-image img').forEach(img => {
 search.value = state.query;
 sort.value = state.sort;
 document.querySelector('.filters').hidden = false;
+document.querySelector('.categories').hidden = false;
+document.querySelector('.mobile-topics').hidden = false;
 document.querySelector('.collection-tools').hidden = false;
 update(false);

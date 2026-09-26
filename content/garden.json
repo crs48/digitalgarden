@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "profile": {
+    "did": "did:plc:fvfdugmhgbbvxjppo2kkveq2",
+    "handle": "crs.land",
+    "displayName": "chris",
+    "description": "maintaining: https://xnet.fyi\nsite: https://crs.land",
+    "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreidziueb25sdvizzlfd3wjl2z4k2n4l2rvwqneunlg6g3a3u3qwx64",
+    "banner": "https://cdn.bsky.app/img/banner/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreicken5llkpzlskmpld6bkuo6ovthksogw3tyfaljlzgrbzyqth4qy"
+  },
+  "entries": [
+    {
+      "title": "This essay by @inkandswitch.com on local-first software has inspired me so much. it…",
+      "url": "https://www.inkandswitch.com/essay/local-first",
+      "category": "Links",
+      "note": "this essay by @inkandswitch.com on local-first software has inspired me so much. it points at a technological promised land that @bsky.app and so many others are aiming at",
+      "tags": [
+        "code"
+      ],
+      "thumbnail": "https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreihr6h56duenqgu7dsnbtgkn7ejwjmxr5oohd7stvakamq4kbakm3e",
+      "links": [
+        {
+          "url": "https://www.inkandswitch.com/essay/local-first",
+          "title": "Local-first software: You own your data, in spite of the cloud"
+        }
+      ],
+      "added": "2026-09-26",
+      "createdAt": "2026-09-26T01:33:55.706Z",
+      "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf5ds7m7c2q"
+    },
+    {
+      "title": "Strolling under the Skin might be my favorite video on the internet. don't watch it if…",
+      "url": "https://www.youtube.com/watch?v=eW0lvOVKDxE",
+      "category": "Videos",
+      "note": "Strolling under the Skin might be my favorite video on the internet. don't watch it if you're squeamish, but if you have a body and have ever wondered how it moves 😘",
+      "tags": [
+        "body",
+        "fascia"
+      ],
+      "thumbnail": "https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreibpgq5sq2tuzvyipw7zd26yhhibfyc4od3rhnfsgmdhsihuwwjloa",
+      "links": [
+        {
+          "url": "https://www.youtube.com/watch?v=eW0lvOVKDxE",
+          "title": "Strolling under the Skin"
+        }
+      ],
+      "media": [
+        {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=eW0lvOVKDxE"
+        }
+      ],
+      "added": "2026-09-26",
+      "createdAt": "2026-09-26T01:26:52.805Z",
+      "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf4x6vox22q"
+    },
+    {
+      "title": "My favorite paper Out of the Tar Pit distinguishes between accidental and essential…",
+      "url": "https://curtclifton.net/papers/MoseleyMarks06a.pdf",
+      "category": "Links",
+      "note": "my favorite paper Out of the Tar Pit distinguishes between accidental and essential complexity. such a good read!",
+      "tags": [
+        "code"
+      ],
+      "links": [
+        {
+          "url": "https://curtclifton.net/papers/MoseleyMarks06a.pdf",
+          "title": "curtclifton.net"
+        }
+      ],
+      "added": "2026-09-26",
+      "createdAt": "2026-09-26T01:22:44.947Z",
+      "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf4psjp3s2q"
+    },
+    {
+      "title": "How to unclench by @jmiller.bsky.social if you read just one long form post my vote is…",
+      "url": "https://howtounclench.com",
+      "category": "Links",
+      "note": "how to unclench by @jmiller.bsky.social if you read just one long form post my vote is for this one",
+      "tags": [
+        "yummy",
+        "fun",
+        "xrisk"
+      ],
+      "thumbnail": "https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreid3675mcltjanauvr75maa2ruesfwgtnpuvrf2pdgycjplji2iqny",
+      "links": [
+        {
+          "url": "https://howtounclench.com",
+          "title": "How to Unclench"
+        }
+      ],
+      "added": "2026-09-26",
+      "createdAt": "2026-09-26T01:19:09.581Z",
+      "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf4jf5aqc2q"
+    },
+    {
+      "title": "Another fantastic Rich Hickey talk Simple Made Easy",
+      "url": "https://www.youtube.com/watch?v=SxdOUGdseq4",
+      "category": "Videos",
+      "tags": [
+        "code"
+      ],
+      "thumbnail": "https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreig3g4ziqzp3dojjph4q6gixrnlb4q4q6xaqafqi4a73c6imhosjiy",
+      "links": [
+        {
+          "url": "https://www.youtube.com/watch?v=SxdOUGdseq4",
+          "title": "\"Simple Made Easy\" - Rich Hickey (2011)"
+        }
+      ],
+      "media": [
+        {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=SxdOUGdseq4"
+        }
+      ],
+      "added": "2026-09-26",
+      "createdAt": "2026-09-26T01:09:13.087Z",
+      "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf3xmbp2s2q"
+    },
+    {
+      "title": "My favorite conference talk Effective Programs by Rich Hickey",
+      "url": "https://www.youtube.com/watch?v=2V1FtfBDsLU",
+      "category": "Videos",
+      "tags": [
+        "code"
+      ],
+      "thumbnail": "https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreifp6kxlletvoha7xlmjwt53425yxfqanynk5oku6dhzefbihtlxey",
+      "links": [
+        {
+          "url": "https://www.youtube.com/watch?v=2V1FtfBDsLU",
+          "title": "Effective Programs - 10 Years of Clojure - Rich Hickey"
+        }
+      ],
+      "media": [
+        {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=2V1FtfBDsLU"
+        }
+      ],
+      "added": "2026-09-26",
+      "createdAt": "2026-09-26T01:08:25.498Z",
+      "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf3w6vfgk2y"
+    },
+    {
+      "title": "My favorite dancing panda gif",
+      "url": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf3u2ebqk2y",
+      "category": "Videos",
+      "tags": [],
+      "media": [
+        {
+          "type": "video",
+          "url": "https://video.bsky.app/watch/did%3Aplc%3Afvfdugmhgbbvxjppo2kkveq2/bafkreifxcvkd2opsgb4hp7wv7apvn6yx7dkj2pbe7k5zcvzdcsxxwfp6sq/playlist.m3u8",
+          "poster": "https://video.bsky.app/watch/did%3Aplc%3Afvfdugmhgbbvxjppo2kkveq2/bafkreifxcvkd2opsgb4hp7wv7apvn6yx7dkj2pbe7k5zcvzdcsxxwfp6sq/thumbnail.jpg",
+          "width": 120,
+          "height": 120,
+          "loop": true
+        }
+      ],
+      "added": "2026-09-26",
+      "createdAt": "2026-09-26T01:07:13.635Z",
+      "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf3u2ebqk2y"
+    },
+    {
+      "title": "This is my favorite diagram of programming paradigms",
+      "url": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf2nmhnn22y",
+      "category": "Images",
+      "tags": [
+        "viz",
+        "code"
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreibj2ywh2izbwqc22kruyfcttcfteoauiinaomqxsr47tf5w2f7g3m",
+          "alt": "",
+          "width": 2786,
+          "height": 1480
+        }
+      ],
+      "added": "2026-09-26",
+      "createdAt": "2026-09-26T00:45:43.994Z",
+      "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mwf2nmhnn22y"
+    }
+  ]
+}

@@ -11,7 +11,7 @@ const build = async () => {
   process.stdout.write(stdout);
 };
 
-const inputs = ['garden.yaml', 'content', 'src', 'public', 'scripts'];
+const inputs = ['content', 'src', 'public', 'scripts'];
 const fingerprint = async path => {
   const info = await stat(path);
   if (!info.isDirectory()) return `${path}:${info.size}:${info.mtimeMs}`;

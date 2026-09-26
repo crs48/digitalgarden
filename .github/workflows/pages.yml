@@ -16,6 +16,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
     permissions:
       contents: write
     steps:
@@ -25,23 +27,25 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Check Bluesky handle
+        run: node --input-type=module -e "import { normalizeHandle } from './scripts/data.mjs'; normalizeHandle(process.env.BLUESKY_HANDLE);"
       - run: npm test
-      - name: Collect Bluesky links
+      - name: Collect garden posts and profile
         id: sync
         continue-on-error: true
         run: npm run sync
       - name: Report import outage
         if: steps.sync.outcome == 'failure'
-        run: echo '::warning::Bluesky import failed. Publishing the last saved collection.'
+        run: echo '::warning::Bluesky import failed. The build will use the saved snapshot only if its profile matches BLUESKY_HANDLE.'
       - run: npm run build
-      - name: Save imported links to the repository
+      - name: Save the profile and garden snapshot
         if: steps.sync.outcome == 'success'
         run: |
-          if ! git diff --quiet -- content/bluesky.json; then
+          if ! git diff --quiet -- content/garden.json; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add content/bluesky.json
-            git commit -m 'content: collect links from Bluesky' -m '- Preserve imported links in the garden archive.'
+            git add content/garden.json
+            git commit -m 'content: sync the Bluesky garden' -m '- Refresh the public profile and current posts tagged #garden.'
             git push
           fi
       - uses: actions/configure-pages@v5
