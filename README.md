@@ -140,6 +140,8 @@ You can use your own domain later; it isn't needed to get started. Follow GitHub
 
 The garden opens in masonry view. The buttons beside the filters switch between masonry and a full feed; shared URLs preserve your filters and chosen view. Search covers titles, commentary, links, formats, and tags. Click the search icon or press `/` to open it; Escape clears and closes it. Format and sort menus support arrow keys, typing an option's name, and Enter to select.
 
+Changes to filters, search, sort, or layout are saved in browser history. Use Back and Forward (including swipe gestures) to return to earlier garden states.
+
 Posts are pulled in GitHub Actions, just before the build. Every run fetches your public profile and posts, keeps the posts tagged `#garden`, saves a snapshot, builds the static site, and deploys it to GitHub Pages. Visitors read the built site; their browsers do not fetch your Bluesky feed.
 
 The scheduled run is **nightly at 3:23 a.m. Pacific** (`America/Los_Angeles`, including daylight saving time). Pushing to `main` or choosing **Actions → Publish garden → Run workflow** runs the same pipeline immediately, so you can publish a new post without waiting for the next night. GitHub schedules can run later than their scheduled time. See [GitHub's scheduling documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).

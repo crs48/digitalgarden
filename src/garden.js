@@ -72,13 +72,13 @@ const update = (writeUrl = true) => {
   document.dispatchEvent(new Event('garden:filter'));
   if (writeUrl) {
     const url = new URL(location.href);
-    ['category', 'tag', 'q', 'sort'].forEach(key => url.searchParams.delete(key));
+    ['category', 'tag', 'q', 'sort', 'view'].forEach(key => url.searchParams.delete(key));
     if (state.category) url.searchParams.set('category', state.category);
     state.tags.forEach(tag => url.searchParams.append('tag', tag));
     if (state.query) url.searchParams.set('q', state.query);
     if (state.sort !== 'newest') url.searchParams.set('sort', state.sort);
     url.searchParams.set('view', state.view);
-    history.replaceState(null, '', url);
+    if (url.href !== location.href) history.pushState(null, '', url);
   }
 };
 const reset = () => { state = { ...state, category: '', tags: [], query: '', sort: 'newest' }; search.value = ''; sort.value = 'newest'; setSearchExpanded(false); update(); };
