@@ -1,55 +1,28 @@
-# Digital garden ✳
+# Digital garden
 
-A quiet index of things worth returning to. Keep talks, papers, essays, books, films, and anything else in one YAML file. Publish on GitHub Pages. Optionally collect links by posting to Bluesky.
+Your Bluesky profile, with a little more room for the things you love. Post with **#garden** to collect links, ideas, images, videos, and audio in a garden of your own. Every other hashtag becomes a topic you can browse.
 
-**[Visit the garden](https://crs48.github.io/digitalgarden/) · [Edit the collection](./garden.yaml)**
+**[Visit the garden](https://crs48.github.io/digitalgarden/)**
+
+Your avatar, banner, display name, bio, and posts all come from Bluesky. There is no YAML collection, manual content editor, account to create, or app password to manage. The site is static and hosted on GitHub Pages.
 
 ## Make it yours
 
-1. Click **Use this template → Create a new repository**. Choose a public repository.
-2. Edit [`garden.yaml`](./garden.yaml): change your name, introduction, personal links, and Bluesky handle. Replace the example entries. Remove `example: true` from any example you decide to keep; the starter notice disappears when none remain.
-3. For a fresh collection, set `entries: []` and reset [`content/bluesky.json`](./content/bluesky.json) to `[]`. Set `bluesky.enabled: false` if you don't want imports.
-4. In **Settings → Pages → Build and deployment**, choose **GitHub Actions**.
-5. Push to `main`, or run **Actions → Publish garden → Run workflow**. The workflow's deployment link is your site.
+1. **[Use this template](https://github.com/crs48/digitalgarden/generate)** to create a public repository.
+2. In your new repository, open **Settings → Secrets and variables → Actions → Variables**. Add a repository variable named **`BLUESKY_HANDLE`** with your handle, such as `your-name.bsky.social`. This is a public handle, not a secret or password.
+3. In **Settings → Pages → Build and deployment**, choose **GitHub Actions**.
+4. Run **Actions → Publish garden → Run workflow**. Your profile and `#garden` posts replace the template's saved snapshot automatically. The deployment link opens your garden.
+5. Add that garden URL to your Bluesky bio so people can move between your profile and your collection.
 
-Works at `username.github.io/repository/`, at the root of a `username.github.io` repository, or on a custom domain. Assets use relative paths, so there is no base-path setting to get wrong. For a custom domain, configure it in GitHub Pages settings and follow [GitHub's domain instructions](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site).
+That's the setup. From then on, tend your garden by posting on Bluesky.
 
-## Add a link
+The workflow checks your handle before publishing. It will not publish this template's saved profile as your own if setup is missing or importing a different account fails. A profile with no `#garden` posts gets a real empty garden.
 
-Append to `entries` in `garden.yaml`, either locally or with GitHub's file editor:
+The site works at `username.github.io/repository/`, at the root of a `username.github.io` repository, and on [custom domains](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site). Asset paths are relative.
 
-```yaml
-- title: A talk I keep coming back to
-  url: https://example.com/talk
-  creator: Someone thoughtful
-  category: Talks
-  year: 2024
-  note: A few words about what stayed with me.
-  tags: [body, movement, attention]
-  added: 2026-09-25
-  thumbnail: images/talk.jpg
-```
+## Plant something
 
-Only `title` and `url` are required. A missing category becomes **Links**. A missing date sorts after dated entries in **Newest additions**. YAML order is the default collection order.
-
-| Field | What it does |
-| --- | --- |
-| `creator` | Author, speaker, director, or source |
-| `category` | Any format you like; new categories appear automatically |
-| `note` | Your reason for keeping the link; plain text, including multiline YAML |
-| `tags` | Any number of topics; multiple selected topics use **AND** |
-| `thumbnail` | A remote image URL, or a file placed under `public/images/` |
-| `year` | When the work was published |
-| `added` | When you added it, using `YYYY-MM-DD` |
-| `source` | Optional original Bluesky post or other provenance link |
-
-The `categories` list sets the sidebar order and can include formats with no entries yet. Tag names are freeform; hyphens display as spaces. Search checks titles, authors, notes, categories, URLs, and tags. Filters are reflected in the URL, so a filtered collection can be bookmarked or shared. Press `/` to focus search and Escape to clear it.
-
-The YAML schema offers autocomplete in compatible editors. The build rejects misspelled keys, invalid dates, duplicate links, missing local images, and unsafe URLs with a readable error.
-
-## Collect from Bluesky
-
-The default setting imports **your own original posts marked `#garden`**. For example, publish a post like:
+Write a post on Bluesky:
 
 ```text
 A lovely way to think about collaborative software.
@@ -57,9 +30,22 @@ https://www.inkandswitch.com/essay/local-first/
 #garden #paper #programming #distributed-data
 ```
 
-Every marked post becomes **one entry**, whether it contains a thought, a link, an image, a video, or several attachments. Every hashtag except `#garden` becomes a topic filter, including format hashtags like `#paper`. A known format hashtag also sets the format; otherwise media determines it automatically (Images, Videos, Audio, Notes, or Links). Marked replies are included; reposts are skipped.
+Every post with **#garden** becomes one entry. Text-only posts work too. Other hashtags become topic filters, including format tags like `#paper`. Formats appear only when the garden contains posts in them.
 
-Titles come from a short opening line or first sentence. The remaining copy becomes the note, with paragraph breaks preserved. Long titles are shortened at a word boundary while the full copy remains in the note. With no copy, the importer falls back to the link-preview title or a media description. This is deterministic text extraction, not an AI service: no extra account or API key is needed. To choose an exact title, write it on its own first line:
+| What you post | What appears in your garden |
+| --- | --- |
+| A thought | A readable note |
+| A link | A link preview, with your own commentary |
+| YouTube or Vimeo | An embedded video player |
+| Bluesky images | An image or gallery with the original alt text |
+| Bluesky video or GIF | A video player; GIFs loop silently after play |
+| Direct image or audio link | An image or audio player |
+| Spotify or SoundCloud | An audio embed |
+| Several links or attachments | One post with all of its media |
+
+Use `#talk`, `#video`, `#paper`, `#essay`, `#book`, `#movie`, `#tv`, `#image`, `#audio`, or `#note` to choose a format. Without a format tag, the garden recognizes Videos, Images, Audio, Notes, or Links from the content. Any other hashtag still works as a topic.
+
+The title comes from your first line or sentence. To choose a title, write a short first line followed by a blank line:
 
 ```text
 Attention is a practice
@@ -68,113 +54,69 @@ A small reminder to notice what is already here.
 #garden #attention #body
 ```
 
-| Post content | Garden presentation |
-| --- | --- |
-| Text, with or without a URL | A readable note with a title drawn from your words |
-| YouTube (watch, short, live, or share link) | Responsive YouTube player; timestamps are preserved |
-| Vimeo | Responsive video player |
-| Uploaded Bluesky image(s) | Full-width image or gallery with original alt text and full-size links |
-| Uploaded Bluesky video or GIF | Inline video player; GIFs loop silently after you press play |
-| Direct image URL (PNG, JPEG, WebP, GIF, AVIF) | Full-size image |
-| Direct audio URL (MP3, M4A, AAC, OGG, Opus, WAV, FLAC) | Native audio player |
-| Spotify or SoundCloud link | Embedded audio player |
-| Direct video URL (MP4, WebM, MOV, M4V, HLS) | Native video player, with HLS support where needed |
-| Other link | A source card using Bluesky's link-preview title and thumbnail |
+Long titles are shortened while preserving the full text below. Title extraction does not require an AI service or API key. Players never autoplay, and every entry links back to its original Bluesky post for the conversation.
 
-Nothing starts playing automatically. Filtering an entry out pauses its native media and unloads its embedded player. Each player keeps an original-source link available if a host disables embedding or a file becomes unavailable. Audio and video codecs still depend on the browser; page links to unsupported services stay usable as links. Remote media is referenced, not downloaded into your repository.
+Search covers titles, notes, links, formats, and hashtags. Multiple selected topics use **AND**. Search and filters are reflected in the URL so you can share a particular corner of your garden. Press `/` to search and Escape to clear the search box.
 
-```yaml
-bluesky:
-  enabled: true
-  handle: your-name.bsky.social
-  mode: hashtag       # hashtag | all-links | manual
-  hashtag: garden     # without the #
-  defaultCategory: Links
-  categoryTags:
-    paper: Papers
-    video: Videos
-    book: Books
-    movie: Movies
-    tv: TV shows
-  excludeUrls: []
-```
+## How syncing works
 
-- **`hashtag`** imports every marked post, including text-only posts; **`all-links`** additionally imports unmarked original posts containing a link. Replies still require the marker.
-- **`manual`** disables automatic importing. Run `npm run sync -- --force` to import marked posts locally, then commit the archive.
-- **`enabled: false`** disables both importing and the display of saved imports.
-- The GitHub workflow checks every six hours, on each push to `main`, and on manual runs. Scheduled runs can be delayed by GitHub, and [GitHub disables schedules after 60 days of repository inactivity](https://docs.github.com/en/actions/using-workflows/disabling-and-enabling-a-workflow). Re-enable the workflow if needed.
-- The importer uses the public Bluesky API. No app password, token, or browser login is needed. It never posts to your account.
-- Imports are saved in `content/bluesky.json` and committed by the workflow. They remain available if Bluesky is offline or a post disappears. **Deleting a Bluesky post does not remove an archived garden entry.** Put the saved entry’s URL or its `source` post URL in `excludeUrls` to remove it and prevent reimporting.
-- Each imported post has a stable identity, so different posts about the same link are preserved and repeat imports update rather than duplicate them. A YAML entry without `source` and with the same URL takes precedence over matching imports. Tracking parameters are ignored; meaningful query parameters and URL fragments are preserved.
-- A failed import preserves the saved collection; publishing continues with that collection and an Actions warning. The importer paginates through up to 5,000 posts, then fails visibly rather than silently truncating a larger history.
-- Saving imports requires the workflow's `contents: write` permission. If branch protection blocks the bot's direct commits, run imports locally or adapt the workflow to your repository's review policy.
+- Only your own posts containing `#garden` are imported. Marked replies and quote posts are included; reposts and unmarked posts are not.
+- The marker is case-insensitive. A URL fragment such as `https://example.com/#garden` does not count as a hashtag.
+- **Bluesky is the source of truth.** After a successful complete sync, deleted posts and posts no longer marked `#garden` disappear. Removing a tag requires changing/replacing the source post through whatever editing features your Bluesky client supports.
+- Two different posts about the same link remain distinct. Repeated imports of the same post do not create duplicates.
+- Your public name, bio, avatar, and banner refresh along with your posts. Missing profile images have a simple fallback.
+- The workflow runs every six hours, on pushes to `main`, and on manual runs. GitHub can delay schedules and [disables them after 60 days of repository inactivity](https://docs.github.com/en/actions/using-workflows/disabling-and-enabling-a-workflow).
+- The importer reads the public Bluesky API without logging in and never posts to your account.
+- `content/garden.json` is a generated snapshot, **not an authoring file**. A failed or incomplete import leaves the entire previous snapshot untouched. Publishing may use that snapshot only when it belongs to the configured handle. This means a deleted post may remain visible during an API outage until a successful sync.
+- Feed pagination is limited to 5,000 posts. A larger history fails visibly and keeps the previous snapshot instead of silently truncating it.
+- The workflow commits changed snapshots with `contents: write`. If branch protection blocks bot commits, run sync locally or adapt the workflow to your repository's review process.
 
 ```mermaid
 flowchart LR
-  YAML["garden.yaml · your collection"] --> Build[Static build]
-  Posts["Your Bluesky posts · #garden"] --> Sync[Public API import]
-  Sync --> Extract["Title · all hashtags · links · attachments"]
-  Extract --> Archive["content/bluesky.json · saved posts"]
-  Archive --> Build
+  Handle["One Bluesky handle"] --> API[Public Bluesky API]
+  Profile["Avatar · banner · name · bio"] --> API
+  Posts["Your posts tagged #garden"] --> API
+  API --> Sync[Complete sync]
+  Sync --> Snapshot["content/garden.json"]
+  Snapshot --> Build[Static build]
   Build --> Pages[GitHub Pages]
   Pages --> Reader[Browse · search · follow a topic]
+  Reader --> Conversation[Original post on Bluesky]
 ```
 
-## Media in YAML
-
-Known media URLs are recognized automatically. For multiple attachments or a media URL without a recognizable extension, use `media` explicitly:
-
-```yaml
-- title: A field recording
-  url: https://example.com/recording
-  category: Audio
-  tags: [attention, nature]
-  media:
-    - type: audio
-      url: https://example.com/recording.mp3
-
-- title: A pair of sketches
-  url: https://example.com/sketches
-  category: Images
-  media:
-    - type: image
-      url: https://example.com/sketch-one.jpg
-      alt: A sketch of a branching tree
-    - type: image
-      url: https://example.com/sketch-two.jpg
-      alt: An overhead view of the same tree
-```
-
-Supported `type` values are `image`, `video`, `audio`, `youtube`, `vimeo`, `spotify`, and `soundcloud`. Images and videos may include `width` and `height`; videos may include `poster` and `loop`. Set `media: []` to show an ordinary link instead of an inferred embed. Raw embed HTML and arbitrary iframes are not accepted. Imported entries also retain a `links` list so multiple links stay together under one post.
+Changing accounts is as simple as updating `BLUESKY_HANDLE` and running the workflow again. The next successful sync replaces the entire saved profile and collection.
 
 ## Develop
 
-Use Node.js 22 or newer (the workflow uses Node.js 24).
+Use Node.js 22 or newer; GitHub Actions uses Node.js 24.
 
 ```sh
 npm ci
-npm run dev       # http://localhost:4321; rebuilds when files change, refresh to see edits
-npm run sync      # collect eligible public Bluesky posts and media
-npm run check     # run tests and build
+BLUESKY_HANDLE=your-name.bsky.social npm run sync
+npm run dev       # http://localhost:4321
+npm run check     # tests and static build
 npm run build     # output in dist/
 ```
 
-If the default port is busy, use `PORT=4318 npm run dev`. The preview also serves `/digitalgarden/` to check project-site paths.
+After the first sync, local `npm run sync` can reuse the handle in the saved snapshot. `BLUESKY_HANDLE` overrides it. A build uses the saved snapshot without making network requests; when a handle is explicitly set, the saved identity must match it.
 
-The build uses the YAML parser. A self-hosted HLS.js player loads on demand only when a visitor plays a streaming video; native HLS is the fallback when Media Source Extensions are unavailable. The output is static HTML, CSS, and a small script for filtering. Links and notes work without JavaScript. No accounts, database, analytics, or client-side Bluesky requests. Google Fonts provides Inter, with system-font fallbacks; remote images and embedded players are loaded from their source hosts. YouTube uses its privacy-enhanced domain. Self-host these assets if you prefer no third-party requests.
+If port 4321 is busy, use `PORT=4318 npm run dev`. Refresh the browser after source changes; the server rebuilds automatically. The preview also supports `/digitalgarden/` for checking GitHub project-page asset paths.
+
+The output is static HTML, CSS, and small scripts for filtering and media playback. Posts remain readable without JavaScript. System fonts avoid an external font request. Remote profile images, media, and embedded players load from their source hosts. YouTube uses its privacy-enhanced domain. A self-hosted HLS.js player loads only when a visitor plays a streaming video.
 
 | File | Purpose |
 | --- | --- |
-| `garden.yaml` | Content, site identity, and import settings |
-| `garden.schema.json` | Editor hints and schema |
-| `content/bluesky.json` | Durable imported collection |
-| `src/styles.css` | Typography, colors, and responsive layout |
-| `src/garden.js` | Search, filter, and sort behavior |
-| `scripts/` | Validation, rendering, development, and import code |
+| `content/garden.json` | Generated public profile and current garden posts |
+| `scripts/bluesky.mjs` | Post extraction, hashtag rules, and pagination |
+| `scripts/sync-bluesky.mjs` | Atomic snapshot refresh |
+| `scripts/data.mjs` | Content and identity validation |
+| `scripts/render.mjs` | Profile, feed, and media rendering |
+| `src/styles.css` | Bluesky-inspired appearance and responsive layout |
+| `src/garden.js` | Search, format, topic, and sort controls |
 | `.github/workflows/pages.yml` | Import, build, and publish |
 
-Implementation references: [GitHub Pages custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), [Bluesky API](https://docs.bsky.app/), and [rich-text facets](https://docs.bsky.app/docs/advanced-guides/post-richtext), [YouTube players](https://developers.google.com/youtube/player_parameters), [Spotify embeds](https://developer.spotify.com/documentation/embeds), and [HLS.js](https://github.com/video-dev/hls.js).
+Built with the [public Bluesky API](https://docs.bsky.app/) and [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages). This is an independent project, not an official Bluesky feature.
 
 ## License
 
-MIT. Linked works, third-party thumbnails, and their copyrights belong to their respective creators.
+MIT. Linked works, profile images, and media belong to their respective creators.
