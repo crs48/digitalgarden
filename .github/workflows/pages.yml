@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
+      GARDEN_DISPLAY_NAME: ${{ vars.GARDEN_DISPLAY_NAME }}
     permissions:
       contents: write
     steps:

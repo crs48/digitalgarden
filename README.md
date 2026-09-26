@@ -16,6 +16,8 @@ Your avatar, banner, display name, bio, and posts all come from Bluesky. There i
 
 That's the setup. From then on, tend your garden by posting on Bluesky.
 
+To use a different name in your garden, optionally add a **`GARDEN_DISPLAY_NAME`** repository variable. It overrides the displayed name while posts and other profile details continue to sync from Bluesky. For local previews, use `GARDEN_DISPLAY_NAME="Your name" npm run dev`. Leave it unset to use your Bluesky display name.
+
 The workflow checks your handle before publishing. It will not publish this template's saved profile as your own if setup is missing or importing a different account fails. A profile with no `#garden` posts gets a real empty garden.
 
 The site works at `username.github.io/repository/`, at the root of a `username.github.io` repository, and on [custom domains](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site). Asset paths are relative.
