@@ -2,6 +2,7 @@ import { entryMedia, providerEmbed, isHls } from './media.mjs';
 export const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
 const e = escapeHtml;
 const icons = {
+  garden: '<path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M5.6 18.4 18.4 5.6"/>',
   all: '<rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/>',
   talks: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/>',
   papers: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M8 12h8M8 16h6"/>',
@@ -36,7 +37,6 @@ const renderEntry = (entry, index) => {
   const linked = (entry.links ?? []).filter(link => !media.some(item => item.url === link.url));
   const rich = media.length > 0 || linked.length > 0;
   return `<li class="entry${rich ? ' entry-rich' : ''}${entry.category === 'Notes' ? ' entry-thought' : ''}" data-entry="${index}" data-category="${e(entry.category)}" data-tags="${e(JSON.stringify(entry.tags))}" data-added="${e(entry.added ?? '')}" data-title="${e(entry.title)}" data-search="${e([entry.title, entry.creator, entry.note, entry.category, entry.url, ...(entry.links ?? []).map(link => link.title), ...entry.tags].filter(Boolean).join(' ').toLowerCase())}">
-  <span class="entry-number" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
   <article class="entry-body">
     <div class="entry-meta"><span>${e(entry.category)}</span>${entry.creator ? `<span>${e(entry.creator)}</span>` : ''}${entry.year ? `<span>${entry.year}</span>` : ''}${entry.source && entry.added ? `<time datetime="${e(entry.added)}">${e(new Date(`${entry.added}T12:00:00Z`).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }))}</time>` : ''}${entry.example ? '<span class="example-label">Example</span>' : ''}</div>
     <h3><a href="${e(entry.url)}" target="_blank" rel="noopener noreferrer">${e(entry.title)}<span class="outbound">${icon('arrow')}<span class="sr-only"> (opens in a new tab)</span></span></a></h3>
@@ -69,16 +69,15 @@ export const renderGarden = (config, entries) => {
 <body>
   <a class="skip-link" href="#collection">Skip to collection</a>
   <div class="shell">
-    <header class="site-header"><a class="brand" href="./" aria-label="${e(site.title)} home"><span class="brand-mark" aria-hidden="true">✳</span><span>${e(site.owner.toLowerCase())}<span class="brand-divider">/</span><strong>${e(site.title.toLowerCase())}</strong></span></a>
+    <header class="site-header"><a class="brand" href="./" aria-label="${e(site.title)} home"><span class="brand-mark" aria-hidden="true">${icon('garden')}</span><span><span class="brand-owner">${e(site.owner)}</span><span class="brand-divider">/</span><strong>${e(site.title)}</strong></span></a>
       <nav class="header-links" aria-label="Elsewhere">${site.home ? `<a href="${e(site.home)}">About ${e(site.owner)} ${icon('arrow')}</a>` : ''}${bluesky.handle ? `<a href="https://bsky.app/profile/${e(bluesky.handle)}">Bluesky ${icon('arrow')}</a>` : ''}</nav>
     </header>
     <main>
-      <section class="intro" aria-labelledby="page-title"><div><p class="eyebrow">A personal collection, always growing</p><h1 id="page-title">${e(site.heading)}</h1><p class="intro-description">${e(site.description)}</p></div><span class="intro-index" aria-hidden="true">INDEX<br><span>${String(entries.length).padStart(3, '0')}</span></span></section>
+      <section class="intro" aria-labelledby="page-title"><div><p class="eyebrow">A personal collection</p><h1 id="page-title">${e(site.heading)}</h1><p class="intro-description">${e(site.description)}</p></div><span class="intro-count">${icon('all')}<strong>${entries.length}</strong> things collected</span></section>
       <div class="garden-layout">
         <aside class="filters" aria-label="Filter collection" hidden>
-          <div class="filter-section"><h2>Browse by format</h2><div class="categories">${categoryButton('', 'Everything', entries.length)}${categories.map(category => categoryButton(category, category, entries.filter(entry => entry.category === category).length)).join('')}</div></div>
-          ${tags.length ? `<details class="filter-section topics" open><summary>Follow a thread <span>${tags.length} topics</span></summary><div class="topic-tags">${tags.map(tagButton).join('')}</div></details>` : ''}
-          <div class="sidebar-note"><span aria-hidden="true">↳</span><p>A garden is never finished.<br>Neither is this one.</p></div>
+          <div class="filter-section"><h2>Collection</h2><div class="categories">${categoryButton('', 'Everything', entries.length)}${categories.map(category => categoryButton(category, category, entries.filter(entry => entry.category === category).length)).join('')}</div></div>
+          ${tags.length ? `<details class="filter-section topics" open><summary>Topics <span>${tags.length} topics</span></summary><div class="topic-tags">${tags.map(tagButton).join('')}</div></details>` : ''}
         </aside>
         <section id="collection" class="collection" aria-labelledby="collection-title" tabindex="-1">
           <div class="collection-tools" hidden><label class="search">${icon('search')}<input id="search" type="search" placeholder="Search the collection" aria-label="Search the collection" autocomplete="off"><kbd aria-hidden="true">/</kbd></label><label class="sort"><span class="sr-only">Sort the collection</span><select id="sort"><option value="curated">Collection order</option><option value="newest">Newest additions</option><option value="title">Title, A–Z</option></select></label></div>
