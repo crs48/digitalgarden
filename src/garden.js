@@ -24,7 +24,6 @@ const sort = document.querySelector('#sort');
 const syncDropdowns = [category, sort].map(setupDropdown);
 const count = document.querySelector('.result-count');
 const heading = document.querySelector('#collection-title');
-const clear = document.querySelector('#clear-filters');
 const empty = document.querySelector('.empty-state');
 const categoryOptions = [...category.options];
 const tagButtons = [...document.querySelectorAll('[data-tag]')];
@@ -61,7 +60,6 @@ const update = (writeUrl = true) => {
   count.textContent = `${visible} ${visible === 1 ? 'post' : 'posts'}`;
   heading.firstChild.textContent = `${state.category || 'Garden'} `;
   empty.hidden = visible > 0;
-  clear.hidden = !state.category && !state.tags.length && !state.query;
   categoryOptions.forEach(option => {
     const total = entries.filter(entry => matches(entry, { ...state, category: option.value })).length;
     option.textContent = `${option.dataset.label} (${total})`;
@@ -105,7 +103,6 @@ tagButtons.forEach(button => button.addEventListener('click', () => {
 }));
 search.addEventListener('input', () => { state = { ...state, query: search.value }; update(); });
 sort.addEventListener('change', () => { state = { ...state, sort: sort.value }; update(); });
-clear.addEventListener('click', reset);
 document.querySelector('.empty-reset').addEventListener('click', reset);
 document.addEventListener('keydown', event => {
   if (event.key === '/' && !event.metaKey && !event.ctrlKey && !event.altKey && !event.target.closest('input, textarea, select, [contenteditable]')) { event.preventDefault(); openSearch(); }

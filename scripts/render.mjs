@@ -116,7 +116,6 @@ export const renderGarden = ({ profile, entries }, { assetVersion = '' } = {}) =
         <div class="filter-strip" role="region" aria-label="Garden filters" tabindex="0">
           <div class="search" data-expanded="false"><button type="button" id="search-toggle" aria-label="Search garden" title="Search garden (/)" aria-expanded="false" aria-controls="search-field">${icon('search')}</button><div id="search-field" class="search-field" hidden><input id="search" type="search" placeholder="Search" aria-label="Search the collection" autocomplete="off"><button type="button" id="search-close" aria-label="Close search and clear query" title="Close search (Esc)">${icon('close')}</button></div></div>
           ${dropdown('category', 'Filter by format', formats)}
-          <button type="button" id="clear-filters" hidden>Clear filters <span aria-hidden="true">×</span></button>
           ${tags.length ? `<div class="filter-tags" role="group" aria-label="Filter by topic">${tags.map(tagButton).join('')}</div>` : ''}
           ${dropdown('sort', 'Sort the collection', [{ value: 'newest', label: 'Newest first', icon: 'clock' }, { value: 'title', label: 'Title, A–Z', icon: 'alphabet' }])}
         </div>
