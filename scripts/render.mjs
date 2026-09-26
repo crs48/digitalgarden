@@ -73,7 +73,7 @@ const renderEntry = (entry, index) => {
     ${media.length ? `<div class="entry-media${media.every(item => item.type === 'image') && media.length > 1 ? ' image-gallery' : ''}">${media.map((item, i) => renderMedia(item, entry, i)).join('')}</div>` : ''}
     ${linked.length ? `<div class="entry-links">${linked.map((link, i) => `<a class="link-preview" href="${e(link.url)}" target="_blank" rel="noopener noreferrer">${i === 0 && entry.thumbnail ? `<img src="${e(entry.thumbnail)}" alt="" width="72" height="72" loading="lazy">` : ''}<span><strong>${e(link.title)}</strong><small>${e(domain(link.url))}</small></span>${icon('arrow')}<span class="sr-only"> (opens in a new tab)</span></a>`).join('')}</div>` : ''}
     ${entry.tags.length ? `<div class="entry-tags">${entry.tags.map(tagButton).join('')}</div>` : ''}
-    <div class="entry-bottom"><span class="entry-details"><span class="entry-format">${icon(entry.category)}${e(entry.category)}</span>${timestamp}</span><a class="source-link" href="${e(entry.source)}" target="_blank" rel="noopener noreferrer" aria-label="View post on Bluesky (opens in a new tab)">Bluesky ${icon('arrow')}</a></div>
+    <div class="entry-bottom"><span class="entry-details"><span class="entry-format">${icon(entry.category)}${e(entry.category)}</span>${timestamp}</span><a class="source-link" href="${e(entry.source)}" target="_blank" rel="noopener noreferrer" aria-label="Engage on Bluesky (opens in a new tab)">Engage on Bluesky ${icon('arrow')}</a></div>
   </article>
   ${entry.thumbnail && !rich ? `<div class="entry-image"><img src="${e(entry.thumbnail)}" alt="" width="88" height="88" loading="lazy" referrerpolicy="no-referrer"></div>` : ''}
 </li>`;
