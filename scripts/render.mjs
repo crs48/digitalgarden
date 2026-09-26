@@ -59,21 +59,21 @@ const linkedTitle = entry => {
   return parts.map(part => part.href ? mentionLink(part) : `<a href="${e(entry.url)}" target="_blank" rel="noopener noreferrer">${e(part.text)}<span class="sr-only"> (opens in a new tab)</span></a>`).join('')
     + `<a class="outbound" href="${e(entry.url)}" target="_blank" rel="noopener noreferrer" aria-label="${e(`Open linked resource: ${entry.title} (opens in a new tab)`)}">${icon('arrow')}</a>`;
 };
-const renderEntry = (entry, index, profile) => {
+const renderEntry = (entry, index) => {
   const media = entryMedia(entry);
   const linked = (entry.links ?? []).filter(link => !media.some(item => item.url === link.url));
   const rich = media.length > 0 || linked.length > 0;
   const titleRepeatsNote = entry.title.endsWith('…') && entry.note?.toLowerCase().startsWith(entry.title.slice(0, -1).toLowerCase());
+  const date = entry.added ? new Date(`${entry.added}T12:00:00Z`) : null;
+  const timestamp = date ? `<time class="entry-date" datetime="${e(entry.createdAt ?? entry.added)}" title="${e(date.toLocaleDateString('en', { dateStyle: 'long', timeZone: 'UTC' }))}">${e(date.toLocaleDateString('en', { month: 'short', day: 'numeric', timeZone: 'UTC' }))}</time>` : '';
   return `<li class="entry${rich ? ' entry-rich' : ''}${entry.category === 'Notes' ? ' entry-thought' : ''}" data-entry="${index}" data-category="${e(entry.category)}" data-tags="${e(JSON.stringify(entry.tags))}" data-added="${e(entry.createdAt ?? entry.added ?? '')}" data-title="${e(entry.title)}" data-search="${e([entry.title, entry.note, entry.category, entry.url, ...(entry.links ?? []).map(link => link.title), ...entry.tags].filter(Boolean).join(' ').toLowerCase())}">
-  <a class="entry-avatar" href="${e(profileUrl(profile))}" aria-label="${e(profile.displayName)} on Bluesky">${avatar(profile)}</a>
   <article class="entry-body">
-    <div class="entry-meta"><a class="entry-author" href="${e(profileUrl(profile))}">${e(profile.displayName)}</a><a class="entry-handle" href="${e(profileUrl(profile))}">@${e(profile.handle)}</a>${entry.added ? `<a class="entry-date" href="${e(entry.source)}"><time datetime="${e(entry.createdAt ?? entry.added)}">${e(new Date(`${entry.added}T12:00:00Z`).toLocaleDateString('en', { month: 'short', day: 'numeric', timeZone: 'UTC' }))}</time></a>` : ''}</div>
     ${titleRepeatsNote ? `<h3 class="sr-only">${e(entry.title)}</h3>` : `<h3>${linkedTitle(entry)}</h3>`}
     ${entry.note ? `<p class="entry-note">${linkedMentions(entry.note, entry.mentions)}</p>` : ''}
     ${media.length ? `<div class="entry-media${media.every(item => item.type === 'image') && media.length > 1 ? ' image-gallery' : ''}">${media.map((item, i) => renderMedia(item, entry, i)).join('')}</div>` : ''}
     ${linked.length ? `<div class="entry-links">${linked.map((link, i) => `<a class="link-preview" href="${e(link.url)}" target="_blank" rel="noopener noreferrer">${i === 0 && entry.thumbnail ? `<img src="${e(entry.thumbnail)}" alt="" width="72" height="72" loading="lazy">` : ''}<span><strong>${e(link.title)}</strong><small>${e(domain(link.url))}</small></span>${icon('arrow')}<span class="sr-only"> (opens in a new tab)</span></a>`).join('')}</div>` : ''}
     ${entry.tags.length ? `<div class="entry-tags">${entry.tags.map(tagButton).join('')}</div>` : ''}
-    <div class="entry-bottom"><span class="entry-format">${icon(entry.category)}${e(entry.category)}</span><a class="source-link" href="${e(entry.source)}" target="_blank" rel="noopener noreferrer">View post on Bluesky ${icon('arrow')}<span class="sr-only"> (opens in a new tab)</span></a></div>
+    <div class="entry-bottom"><span class="entry-details"><span class="entry-format">${icon(entry.category)}${e(entry.category)}</span>${timestamp}</span><a class="source-link" href="${e(entry.source)}" target="_blank" rel="noopener noreferrer" aria-label="View post on Bluesky (opens in a new tab)">Bluesky ${icon('arrow')}</a></div>
   </article>
   ${entry.thumbnail && !rich ? `<div class="entry-image"><img src="${e(entry.thumbnail)}" alt="" width="88" height="88" loading="lazy" referrerpolicy="no-referrer"></div>` : ''}
 </li>`;
@@ -124,7 +124,7 @@ export const renderGarden = ({ profile, entries }, { assetVersion = '' } = {}) =
       </div>
       <section id="collection" class="collection" aria-labelledby="collection-title" tabindex="-1">
         <div class="collection-heading"><h2 id="collection-title">Garden <span class="result-count" role="status" aria-live="polite">${entries.length} ${entries.length === 1 ? 'post' : 'posts'}</span></h2></div>
-        <ul class="entries" data-layout="masonry" role="list">${entries.map((entry, i) => renderEntry(entry, i, profile)).join('')}</ul>
+        <ul class="entries" data-layout="masonry" role="list">${entries.map(renderEntry).join('')}</ul>
         <div class="empty-state" ${entries.length ? 'hidden' : ''}><span aria-hidden="true">${icon('garden')}</span><h3>${entries.length ? 'No posts found' : 'A little room to grow'}</h3><p>${entries.length ? 'Try another search or choose a different topic.' : 'Posts tagged #garden on Bluesky will appear here.'}</p><button type="button" class="empty-reset" ${entries.length ? '' : 'hidden'}>Show all posts</button></div>
       </section>
       <footer>Grown on Bluesky. A garden of your own.</footer>
