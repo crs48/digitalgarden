@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Digital garden",
+  "type": "object",
+  "required": ["site", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "site": {
+      "type": "object",
+      "required": ["title", "owner", "heading", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "heading": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "home": { "$ref": "#/$defs/url" },
+        "repository": { "$ref": "#/$defs/url" },
+        "accent": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$", "default": "#2458d3" }
+      }
+    },
+    "categories": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "bluesky": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "handle": { "type": "string", "minLength": 1 },
+        "mode": { "enum": ["hashtag", "all-links", "manual"], "default": "hashtag" },
+        "hashtag": { "type": "string", "default": "garden" },
+        "defaultCategory": { "type": "string", "default": "Links" },
+        "categoryTags": { "type": "object", "additionalProperties": { "type": "string", "minLength": 1 } },
+        "excludeUrls": { "type": "array", "items": { "$ref": "#/$defs/url" } }
+      }
+    },
+    "entries": { "type": "array", "items": { "$ref": "#/$defs/entry" } }
+  },
+  "$defs": {
+    "url": { "type": "string", "format": "uri", "pattern": "^https?://" },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "url"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "url": { "$ref": "#/$defs/url" },
+        "creator": { "type": "string", "minLength": 1 },
+        "category": { "type": "string", "default": "Links", "minLength": 1 },
+        "year": { "type": "integer", "minimum": 1, "maximum": 9999 },
+        "note": { "type": "string", "minLength": 1 },
+        "tags": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "thumbnail": { "type": "string", "description": "An HTTPS image URL, or images/filename relative to public/" },
+        "added": { "type": "string", "format": "date" },
+        "example": { "type": "boolean", "default": false },
+        "source": { "$ref": "#/$defs/url" }
+      }
+    }
+  }
+}
