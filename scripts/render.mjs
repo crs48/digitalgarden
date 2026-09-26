@@ -60,8 +60,7 @@ export const renderGarden = ({ profile, entries }) => {
   const categories = [...new Set(entries.map(entry => entry.category))].sort((a, b) => a.localeCompare(b));
   const tags = [...new Set(entries.flatMap(entry => entry.tags))].sort((a, b) => a.localeCompare(b));
   const source = profileUrl(profile);
-  const categoryButton = (category, label, count) => `<button class="category${category === '' ? ' selected' : ''}" type="button" data-category-filter="${e(category)}" aria-pressed="${category === ''}"><span>${e(label)}</span><span class="category-count">${count}</span></button>`;
-  const topics = className => tags.length ? `<details class="topics ${className}" open><summary>Topics <span>${tags.length}</span></summary><div class="topic-tags">${tags.map(tagButton).join('')}</div></details>` : '';
+  const categoryOption = (category, label, count) => `<option value="${e(category)}" data-label="${e(label)}">${e(label)} (${count})</option>`;
   const templateUrl = 'https://github.com/crs48/digitalgarden/generate';
   const description = `The digital garden of @${profile.handle}. Links, ideas, and discoveries collected on Bluesky with #garden.`;
   return `<!doctype html>
@@ -89,19 +88,23 @@ export const renderGarden = ({ profile, entries }) => {
           <p class="garden-description">A garden of links, ideas, and discoveries.<br>Collected on Bluesky with <span>#garden</span>.</p>
         </div>
       </section>
+      <div class="collection-toolbar" hidden>
+        <div class="filter-strip" role="region" aria-label="Garden filters" tabindex="0">
+          <label class="format-filter"><span class="sr-only">Filter by format</span><select id="category">${categoryOption('', 'All posts', entries.length)}${categories.map(category => categoryOption(category, category, entries.filter(entry => entry.category === category).length)).join('')}</select></label>
+          <label class="search">${icon('search')}<input id="search" type="search" placeholder="Search garden" aria-label="Search the collection" autocomplete="off"><kbd aria-hidden="true">/</kbd></label>
+          <button type="button" id="clear-filters" hidden>Clear filters <span aria-hidden="true">×</span></button>
+          ${tags.length ? `<div class="filter-tags" role="group" aria-label="Filter by topic">${tags.map(tagButton).join('')}</div>` : ''}
+          <label class="sort"><span class="sr-only">Sort the collection</span><select id="sort"><option value="newest">Newest first</option><option value="title">Title, A–Z</option></select></label>
+        </div>
+      </div>
       <section id="collection" class="collection" aria-labelledby="collection-title" tabindex="-1">
-        <div class="categories" aria-label="Filter by format" hidden>${categoryButton('', 'All posts', entries.length)}${categories.map(category => categoryButton(category, category, entries.filter(entry => entry.category === category).length)).join('')}</div>
-        <div class="collection-tools" hidden><label class="search">${icon('search')}<input id="search" type="search" placeholder="Search this garden" aria-label="Search the collection" autocomplete="off"><kbd aria-hidden="true">/</kbd></label><label class="sort"><span class="sr-only">Sort the collection</span><select id="sort"><option value="newest">Newest first</option><option value="title">Title, A–Z</option></select></label></div>
-        <div class="mobile-topics" hidden>${topics('')}</div>
-        <div class="collection-heading"><h2 id="collection-title">Garden <span class="result-count" role="status" aria-live="polite">${entries.length} ${entries.length === 1 ? 'post' : 'posts'}</span></h2><button type="button" id="clear-filters" hidden>Clear filters <span aria-hidden="true">×</span></button></div>
-        <div id="active-filters" class="active-filters" hidden></div>
+        <div class="collection-heading"><h2 id="collection-title">Garden <span class="result-count" role="status" aria-live="polite">${entries.length} ${entries.length === 1 ? 'post' : 'posts'}</span></h2></div>
         <ul class="entries" role="list">${entries.map((entry, i) => renderEntry(entry, i, profile)).join('')}</ul>
         <div class="empty-state" ${entries.length ? 'hidden' : ''}><span aria-hidden="true">${icon('garden')}</span><h3>${entries.length ? 'No posts found' : 'A little room to grow'}</h3><p>${entries.length ? 'Try another search or choose a different topic.' : 'Posts tagged #garden on Bluesky will appear here.'}</p><button type="button" class="empty-reset" ${entries.length ? '' : 'hidden'}>Show all posts</button></div>
       </section>
       <footer>Grown on Bluesky. A garden of your own.</footer>
     </main>
     <aside class="garden-sidebar" aria-label="About this garden">
-      <div class="filters" aria-label="Filter by topic" hidden>${topics('')}</div>
       <section class="about-garden"><h2>Post it. Keep it.</h2><p>Add <strong>#garden</strong> to a Bluesky post to give it a home here. Your other hashtags become topics.</p></section>
       <p class="site-note">An independent garden, connected to Bluesky.<br><a href="https://github.com/crs48/digitalgarden">Open source</a></p>
     </aside>

@@ -1,22 +1,16 @@
 const list = document.querySelector('.entries');
 const entries = [...document.querySelectorAll('[data-entry]')];
 const search = document.querySelector('#search');
+const category = document.querySelector('#category');
 const sort = document.querySelector('#sort');
 const count = document.querySelector('.result-count');
 const heading = document.querySelector('#collection-title');
 const clear = document.querySelector('#clear-filters');
-const active = document.querySelector('#active-filters');
 const empty = document.querySelector('.empty-state');
-const categoryButtons = [...document.querySelectorAll('[data-category-filter]')];
+const categoryOptions = [...category.options];
 const tagButtons = [...document.querySelectorAll('[data-tag]')];
-const knownCategories = new Set(categoryButtons.map(button => button.dataset.categoryFilter));
+const knownCategories = new Set(categoryOptions.map(option => option.value));
 const knownTags = new Set(tagButtons.map(button => button.dataset.tag));
-const topics = [...document.querySelectorAll('.topics')];
-const mobile = matchMedia('(max-width: 680px)');
-topics.forEach(topic => {
-  topic.open = !mobile.matches;
-  mobile.addEventListener('change', event => { topic.open = !event.matches; });
-});
 const readState = () => {
   const params = new URLSearchParams(location.search);
   return {
@@ -45,22 +39,12 @@ const update = (writeUrl = true) => {
   heading.firstChild.textContent = `${state.category || 'Garden'} `;
   empty.hidden = visible > 0;
   clear.hidden = !state.category && !state.tags.length && !state.query;
-  categoryButtons.forEach(button => {
-    const selected = button.dataset.categoryFilter === state.category;
-    button.classList.toggle('selected', selected);
-    button.setAttribute('aria-pressed', String(selected));
-    button.querySelector('.category-count').textContent = String(entries.filter(entry => matches(entry, { ...state, category: button.dataset.categoryFilter })).length);
+  categoryOptions.forEach(option => {
+    const total = entries.filter(entry => matches(entry, { ...state, category: option.value })).length;
+    option.textContent = `${option.dataset.label} (${total})`;
   });
+  category.value = state.category;
   tagButtons.forEach(button => button.setAttribute('aria-pressed', String(state.tags.includes(button.dataset.tag))));
-  active.replaceChildren(...state.tags.map(tag => {
-    const button = document.createElement('button');
-    button.className = 'active-tag';
-    button.textContent = `#${tag} ×`;
-    button.setAttribute('aria-label', `Remove ${tag.replaceAll('-', ' ')} filter`);
-    button.addEventListener('click', () => { state = { ...state, tags: state.tags.filter(value => value !== tag) }; update(); });
-    return button;
-  }));
-  active.hidden = state.tags.length === 0;
   document.dispatchEvent(new Event('garden:filter'));
   if (writeUrl) {
     const url = new URL(location.href);
@@ -73,7 +57,7 @@ const update = (writeUrl = true) => {
   }
 };
 const reset = () => { state = { category: '', tags: [], query: '', sort: 'newest' }; search.value = ''; sort.value = 'newest'; update(); };
-categoryButtons.forEach(button => button.addEventListener('click', () => { state = { ...state, category: button.dataset.categoryFilter }; update(); }));
+category.addEventListener('change', () => { state = { ...state, category: category.value }; update(); });
 tagButtons.forEach(button => button.addEventListener('click', () => {
   const tag = button.dataset.tag;
   state = { ...state, tags: state.tags.includes(tag) ? state.tags.filter(value => value !== tag) : [...state.tags, tag] };
@@ -95,8 +79,5 @@ document.querySelectorAll('.entry-image img').forEach(img => {
 });
 search.value = state.query;
 sort.value = state.sort;
-document.querySelector('.filters').hidden = false;
-document.querySelector('.categories').hidden = false;
-document.querySelector('.mobile-topics').hidden = false;
-document.querySelector('.collection-tools').hidden = false;
+document.querySelector('.collection-toolbar').hidden = false;
 update(false);

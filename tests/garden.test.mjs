@@ -48,11 +48,11 @@ test('HTML escapes profile and post content and keeps GitHub Pages asset paths',
   assert.match(html, /rel="noopener noreferrer"/);
   assert.match(html, /https:\/\/example.com\/\?a=1&amp;b=2/);
 });
-test('empty gardens show a useful prompt without samples or empty format tabs', () => {
+test('empty gardens show a useful prompt without samples or empty format options', () => {
   const html = renderGarden(snapshot());
   assert.match(html, /Posts tagged #garden on Bluesky will appear here/);
   assert.ok(!html.includes('Starter collection'));
-  assert.ok(!html.includes('data-category-filter="Books"'));
+  assert.ok(!html.includes('<option value="Books"'));
 });
 test('imports retain title, category, all other tags, media, date, and source', () => {
   const [entry] = entriesFromFeed([feedItem()], did);
