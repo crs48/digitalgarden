@@ -1,73 +1,144 @@
 # Digital garden
 
-Your Bluesky profile, with a little more room for the things you love. Post with **#garden** to collect links, ideas, images, videos, and audio in a garden of your own. Every other hashtag becomes a topic you can browse.
+Turn your Bluesky posts into a personal collection of links, videos, images, and ideas. **Add `#garden` to a post, and it appears in your garden after the next update.** Other hashtags become clickable topic filters.
 
-**[Create your garden →](https://github.com/crs48/digitalgarden/generate) · [See it live](https://crs.garden/)**
+Your name, avatar, banner, and bio come from Bluesky too. **The only setting you provide is your Bluesky handle.**
 
-**The only setting is your Bluesky handle.** Your name, avatar, banner, bio, and posts all come from Bluesky. GitHub Actions refreshes and publishes your garden every night. No content files to edit, passwords, API keys, or extra accounts.
+**[See an example garden](https://crs.garden/) · [Create your garden](#create-your-garden)**
 
-## Make it yours
-
-1. **Copy the template.** Click **[Use this template](https://github.com/crs48/digitalgarden/generate)** and create a public repository. Forking also works.
-2. **Set your handle.** In your copy, open **Settings → Secrets and variables → Actions → Variables → New repository variable**. Set the name to **`BLUESKY_HANDLE`** and the value to your handle, such as **`@crs.land`** or **`your-name.bsky.social`**. The `@` is optional. This is a variable, not a secret.
-3. **Enable hosting.** In **Settings → Pages → Build and deployment → Source**, choose **GitHub Actions**.
-4. **Publish once.** Open **Actions → Publish garden → Run workflow**. When it finishes, open the deployment link to see your garden. Future updates happen nightly.
-
-If you forked the repository, GitHub may ask you to enable workflows in the **Actions** tab first. Set `BLUESKY_HANDLE` in your own copy; repository variables are not copied with the source files.
-
-That's it. Add your garden's URL to your Bluesky bio, then post with **#garden** to grow it. To change your displayed name, avatar, banner, or bio, edit your Bluesky profile; the next sync brings those changes into your garden.
-
-The workflow checks your handle before publishing. It will not publish this template's saved profile as your own if setup is missing or importing a different account fails. A profile with no `#garden` posts gets a real empty garden.
-
-The site works at `username.github.io/repository/`, at the root of a `username.github.io` repository, and on [custom domains](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site). Asset paths are relative.
-
-## Plant something
-
-Write a post on Bluesky:
-
-```text
-A lovely way to think about collaborative software.
-https://www.inkandswitch.com/essay/local-first/
-#garden #paper #programming #distributed-data
+```mermaid
+flowchart LR
+  Post["Post on Bluesky with #garden"] --> Update["GitHub updates your site each night"]
+  Update --> Garden["Browse it in your garden"]
 ```
 
-Every post with **#garden** becomes one entry. Text-only posts work too. Other hashtags become topic filters, including format tags like `#paper`. Formats appear only when the garden contains posts in them.
+## Create your garden
 
-| What you post | What appears in your garden |
+You'll need a **Bluesky account** and a **GitHub account**. Everything below happens in your browser: no coding, downloads, API keys, or Bluesky password required.
+
+### 1. Make your own copy
+
+Click **[Use this template](https://github.com/crs48/digitalgarden/generate)**. Choose your GitHub account as the owner, name the repository **`digitalgarden`** (or any name you like), select **Public**, and click **Create repository from template**.
+
+Do the remaining steps in **your new repository**.
+
+### 2. Set your Bluesky handle
+
+Open **Settings → Secrets and variables → Actions → Variables → New repository variable**. Fill in these two fields, then click **Add variable**:
+
+| Field | What to enter |
 | --- | --- |
-| A thought | A readable note |
-| A link | A link preview, with your own commentary |
-| YouTube or Vimeo | An embedded video player |
-| Bluesky images | An image or gallery with the original alt text |
-| Bluesky video or GIF | A video player; GIFs loop silently after play |
-| Direct image or audio link | An image or audio player |
-| Spotify or SoundCloud | An audio embed |
-| Several links or attachments | One post with all of its media |
+| **Name** | `BLUESKY_HANDLE` |
+| **Value** | Your handle, such as `your-name.bsky.social` or `@crs.land` |
 
-Use `#talk`, `#video`, `#paper`, `#essay`, `#book`, `#movie`, `#tv`, `#image`, `#audio`, or `#note` to choose a format. Without a format tag, the garden recognizes Videos, Images, Audio, Notes, or Links from the content. Any other hashtag still works as a topic.
+Use your own handle, not your display name or a profile URL. The `@` is optional. Choose the **Variables** tab, not **Secrets**.
 
-The title comes from your first line or sentence. To choose a title, write a short first line followed by a blank line:
+### 3. Turn on GitHub Pages
+
+Open **Settings → Pages**. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+
+### 4. Publish your garden
+
+Open **Actions → Publish garden → Run workflow**, leave the branch as **main**, then click **Run workflow** in the menu.
+
+Wait for the run to show a green check, then open **Settings → Pages → Visit site**. If you named your repository `digitalgarden`, its address will usually be:
 
 ```text
-Attention is a practice
-
-A small reminder to notice what is already here.
-#garden #attention #body
+https://YOUR-GITHUB-USERNAME.github.io/digitalgarden/
 ```
 
-Long titles are shortened while preserving the full text below. Title extraction does not require an AI service or API key. Players never autoplay, and every entry links back to its original Bluesky post for the conversation.
+**You're ready.** Add that address to your Bluesky bio and post something with `#garden`. Your garden updates automatically every night. Existing posts with `#garden` are collected too; if you haven't posted any yet, you'll see an empty garden.
 
-@mentions link to Bluesky profiles in titles and post text. Imported mentions retain the account's Bluesky ID so their links keep working after a handle change. Plain handles and mentions in the profile bio link by handle.
+## Post on Bluesky → see it in your garden
 
-Search covers titles, notes, links, formats, and hashtags. Multiple selected topics use **AND**. Search and filters are reflected in the URL so you can share a particular corner of your garden. Click the search icon at the left of the filter bar or press `/` to expand search. Escape clears the query and closes the search box.
+Post these examples from the Bluesky account you configured, replacing the text and links with your own favorites. Each post becomes **one card** after the next successful update.
 
-The format and sort menus support arrow keys, typing an option's name, and Enter to select. Escape closes a menu without changing your selection.
+### Save a paper or essay
 
-The garden defaults to compact masonry whenever the URL does not specify a view. Use the layout buttons beside the filters to switch between cards and the full feed; shared URLs preserve the chosen view. Cards reflow as media loads or filters change, with a single column on small screens.
+```text
+Out of the Tar Pit
 
-## How syncing works
+A paper I keep returning to about accidental complexity.
+https://curtclifton.net/papers/MoseleyMarks06a.pdf
+#garden #paper #code
+```
 
-**Yes: posts are pulled in GitHub Actions, just before the build.** Every run fetches your public profile and posts, keeps the posts tagged `#garden`, saves a snapshot, builds the static site, and deploys it to GitHub Pages. Visitors read the built site; their browsers do not fetch your Bluesky feed.
+**In your garden:** a card titled **Out of the Tar Pit**, with your commentary and a link to the PDF. It appears under **Papers** and the **#paper** and **#code** topic filters.
+
+### Keep a favorite video
+
+```text
+Simple Made Easy
+
+A favorite talk by Rich Hickey.
+https://www.youtube.com/watch?v=SxdOUGdseq4
+#garden #code
+```
+
+**In your garden:** a **Simple Made Easy** card with an embedded YouTube player, under **Videos** and **#code**. It plays when a visitor chooses to watch it.
+
+### Collect a photo or a thought
+
+Attach a photo in Bluesky and post:
+
+```text
+A little room to breathe
+
+A reminder to slow down.
+#garden #body #movement
+```
+
+**In your garden:** the photo and your words appear together under **Images**, **#body**, and **#movement**. The photo's alt text comes along too. Post the same text without a photo and it appears under **Notes** instead.
+
+### A few simple rules
+
+- **`#garden` adds the post.** Posts without it stay out of the garden. It does not appear as a topic filter itself.
+- **Other hashtags organize it.** Choose any topics you like. Click a topic to filter; click it again to turn it off. Selecting several topics shows posts that match all of them.
+- **Your first line becomes the title.** A short heading followed by a blank line, as in the examples above, works well. Your remaining text becomes the commentary.
+- **One post stays together.** Multiple images or links remain in one card. Every card links back to its original Bluesky post, and @mentions link to accounts.
+
+The garden recognizes links, notes, images, videos, and audio automatically. You can choose a format explicitly with a hashtag:
+
+| Hashtag | Format |
+| --- | --- |
+| `#paper`, `#essay`, `#book` | Papers, Essays, Books |
+| `#talk`, `#video`, `#movie`, `#tv` | Talks, Videos, Movies, TV shows |
+| `#image`, `#audio`, `#note` | Images, Audio, Notes |
+
+YouTube and Vimeo links get video players. Spotify, SoundCloud, and direct audio links get audio players. Bluesky images and videos are supported, including GIFs that loop silently after you press play.
+
+## When does it update?
+
+Your garden refreshes **nightly at 3:23 a.m. Pacific**. It is not an instant feed: new posts appear after the next successful build.
+
+**Want a post to appear sooner?** In your repository, open **Actions → Publish garden → Run workflow**. This refreshes both your posts and your profile. GitHub schedules can sometimes run late; the [workflow scheduling docs](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule) explain the timing.
+
+To change your name, avatar, banner, or bio, edit your Bluesky profile. To remove an entry, delete its Bluesky post; the next successful update removes it from the garden.
+
+<details>
+<summary><strong>Need help getting started?</strong></summary>
+
+| What you see | What to do |
+| --- | --- |
+| The first run failed before you finished setup | Complete steps 2 and 3, then run **Publish garden** again. |
+| A handle error | Check that `BLUESKY_HANDLE` is under **Actions → Variables**, spelled exactly, and contains your handle rather than a URL. |
+| A Pages configuration error | Set **Settings → Pages → Source** to **GitHub Actions**, then rerun the workflow. |
+| The garden is empty | Post from the configured account with `#garden`, then run **Publish garden**. |
+| A new post hasn't appeared | Wait for the nightly update or run it manually. Check the latest run for errors. |
+| Workflows are disabled in a fork | Enable them in **Actions**, then follow steps 2–4. Variables must be set separately in each copy. |
+
+For GitHub's illustrated instructions, see [copying a template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template), [adding repository variables](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-variables), and [setting the Pages publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
+
+You can use your own domain later; it isn't needed to get started. Follow GitHub's [custom domain guide](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site).
+
+</details>
+
+<details>
+<summary><strong>More about syncing and browsing</strong></summary>
+
+The garden opens in masonry view. The buttons beside the filters switch between masonry and a full feed; shared URLs preserve your filters and chosen view. Search covers titles, commentary, links, formats, and tags. Click the search icon or press `/` to open it; Escape clears and closes it. Format and sort menus support arrow keys, typing an option's name, and Enter to select.
+
+Posts are pulled in GitHub Actions, just before the build. Every run fetches your public profile and posts, keeps the posts tagged `#garden`, saves a snapshot, builds the static site, and deploys it to GitHub Pages. Visitors read the built site; their browsers do not fetch your Bluesky feed.
 
 The scheduled run is **nightly at 3:23 a.m. Pacific** (`America/Los_Angeles`, including daylight saving time). Pushing to `main` or choosing **Actions → Publish garden → Run workflow** runs the same pipeline immediately, so you can publish a new post without waiting for the next night. GitHub schedules can run later than their scheduled time. See [GitHub's scheduling documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
 
@@ -82,24 +153,12 @@ The scheduled run is **nightly at 3:23 a.m. Pacific** (`America/Los_Angeles`, in
 - Feed pagination is limited to 5,000 posts. A larger history fails visibly and keeps the previous snapshot instead of silently truncating it.
 - The workflow commits changed snapshots with `contents: write`. If branch protection blocks bot commits, run sync locally or adapt the workflow to your repository's review process.
 
-```mermaid
-flowchart LR
-  Trigger["Nightly · push · manual run"] --> Action[GitHub Actions]
-  Action --> API[Public Bluesky API]
-  Handle["One Bluesky handle"] --> API
-  Profile["Avatar · banner · name · bio"] --> API
-  Posts["Your posts tagged #garden"] --> API
-  API --> Sync["Keep your #garden posts"]
-  Sync --> Snapshot["Saved profile and posts"]
-  Snapshot --> Build[Static build]
-  Build --> Pages[GitHub Pages]
-  Pages --> Reader[Browse · search · follow a topic]
-  Reader --> Conversation[Original post on Bluesky]
-```
-
 Changing accounts is as simple as updating `BLUESKY_HANDLE` and running the workflow again. The next successful sync replaces the entire saved profile and collection.
 
-## Develop
+</details>
+
+<details>
+<summary><strong>Develop locally</strong></summary>
 
 Use Node.js 22 or newer; GitHub Actions uses Node.js 24.
 
@@ -131,6 +190,8 @@ The output is static HTML, CSS, and small scripts for filtering and media playba
 | `.github/workflows/pages.yml` | Import, build, and publish |
 
 Built with the [public Bluesky API](https://docs.bsky.app/) and [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages). This is an independent project, not an official Bluesky feature.
+
+</details>
 
 ## License
 

@@ -85,7 +85,7 @@ export const renderGarden = ({ profile, entries }, { assetVersion = '' } = {}) =
   const tags = [...new Set(entries.flatMap(entry => entry.tags))].sort((a, b) => a.localeCompare(b));
   const source = profileUrl(profile);
   const formats = [{ value: '', label: 'All posts', count: entries.length, icon: 'all' }, ...categories.map(category => ({ value: category, label: category, count: entries.filter(entry => entry.category === category).length, icon: category }))];
-  const templateUrl = 'https://github.com/crs48/digitalgarden/generate';
+  const repositoryUrl = 'https://github.com/crs48/digitalgarden';
   const description = `The digital garden of @${profile.handle}. Links, ideas, and discoveries collected on Bluesky with #garden.`;
   return `<!doctype html>
 <html lang="en">
@@ -131,10 +131,10 @@ export const renderGarden = ({ profile, entries }, { assetVersion = '' } = {}) =
         </div>
       </section>
       <section class="about-garden"><h2>Post it. Keep it.</h2><p>Add <strong>#garden</strong> to a Bluesky post to give it a home here. Your other hashtags become topics.</p></section>
-      <p class="site-note">An independent garden, connected to Bluesky.<br><a href="https://github.com/crs48/digitalgarden">Open source</a></p>
+      <p class="site-note">An independent garden, connected to Bluesky.<br><a href="${repositoryUrl}">Open source</a></p>
     </aside>
   </main>
-  <a class="garden-badge" href="${templateUrl}" aria-label="Create your own garden on GitHub">${icon('github')}<span>Create your own garden</span></a>
+  <a class="garden-badge" href="${repositoryUrl}" aria-label="Create your own garden on GitHub">${icon('github')}<span>Create your own garden</span></a>
 </body>
 </html>`;
 };
