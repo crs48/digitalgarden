@@ -3,7 +3,7 @@ import { inferMedia } from './media.mjs';
 
 const hashtagList = record => [...new Set([
   ...(record.facets ?? []).flatMap(facet => facet.features ?? []).filter(feature => feature.$type === 'app.bsky.richtext.facet#tag').map(feature => feature.tag.toLowerCase()),
-  ...[...(record.text ?? '').matchAll(/(?:^|[^\p{L}\p{N}_/])#([\p{L}\p{N}_-]+)/gu)].map(match => match[1].toLowerCase()),
+  ...[...(record.text ?? '').replace(/https?:\/\/\S+/g, '').matchAll(/(?:^|[^\p{L}\p{N}_/])#([\p{L}\p{N}_-]+)/gu)].map(match => match[1].toLowerCase()),
 ])];
 const externalEmbed = post => post.embed?.external ?? post.embed?.media?.external ?? post.record?.embed?.external ?? post.record?.embed?.media?.external;
 const cleanCopy = (record, tags) => {

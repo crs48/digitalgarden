@@ -23,6 +23,7 @@ test('every marked text post becomes an entry with all other hashtags', () => {
 test('marked replies are collected but unmarked posts and reposts are not', () => {
   assert.equal(importOne('Worth saving #garden', undefined, { reply: {} }).category, 'Notes');
   assert.equal(importOne('Not marked #gardening'), undefined);
+  assert.equal(importOne('A URL fragment https://example.com/?topic=#garden'), undefined);
   assert.equal(entriesFromFeed([{ ...item('#garden'), reason: { $type: 'repost' } }], settings, did).length, 0);
 });
 test('titles use standalone headings, sentences, and preview fallbacks without losing copy', () => {
