@@ -28,7 +28,7 @@ const allowedKeys = (object, keys, path) => Object.keys(object).forEach(key => {
 
 export const validateEntry = (entry, path = 'entry') => {
   if (!entry || typeof entry !== 'object' || Array.isArray(entry)) fail(path, 'must be an object');
-  allowedKeys(entry, ['title', 'url', 'category', 'note', 'tags', 'thumbnail', 'added', 'createdAt', 'source', 'media', 'links', 'mentions'], path);
+  allowedKeys(entry, ['title', 'url', 'category', 'note', 'tags', 'thumbnail', 'added', 'createdAt', 'source', 'media', 'links', 'mentions', 'replyCount', 'likeCount'], path);
   if (!text(entry.title)) fail(`${path}.title`, 'is required');
   if (!isWebUrl(entry.url)) fail(`${path}.url`, 'must be a full http(s) URL');
   optionalText(entry, ['category', 'note'], path);
@@ -37,6 +37,9 @@ export const validateEntry = (entry, path = 'entry') => {
   if (entry.createdAt !== undefined && (typeof entry.createdAt !== 'string' || Number.isNaN(Date.parse(entry.createdAt)))) fail(`${path}.createdAt`, 'must be a valid timestamp');
   if (entry.thumbnail !== undefined && !isWebUrl(entry.thumbnail)) fail(`${path}.thumbnail`, 'must be a full http(s) URL');
   if (entry.source !== undefined && !isWebUrl(entry.source)) fail(`${path}.source`, 'must be a full http(s) URL');
+  ['replyCount', 'likeCount'].forEach(key => {
+    if (entry[key] !== undefined && (!Number.isSafeInteger(entry[key]) || entry[key] < 0)) fail(`${path}.${key}`, 'must be a non-negative safe integer');
+  });
   if (entry.mentions !== undefined) {
     if (!Array.isArray(entry.mentions)) fail(`${path}.mentions`, 'must be a list');
     entry.mentions.forEach((mention, i) => {

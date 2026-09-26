@@ -68,6 +68,41 @@ test('imports retain title, category, all other tags, media, date, and source', 
   assert.equal(entry.createdAt, '2026-09-25T12:00:00.000Z');
   assert.equal(entry.source, source);
 });
+test('engagement imports preserve zero and positive counts without inventing missing counts', () => {
+  const [entry] = entriesFromFeed([feedItem({ replyCount: 0, likeCount: 1234 })], did);
+  assert.equal(entry.replyCount, 0);
+  assert.equal(entry.likeCount, 1234);
+  for (const value of [undefined, null, -1, 1.5, '2', Infinity, Number.MAX_SAFE_INTEGER + 1]) {
+    const [unavailable] = entriesFromFeed([feedItem({ replyCount: value, likeCount: value })], did);
+    assert.ok(!Object.hasOwn(unavailable, 'replyCount'));
+    assert.ok(!Object.hasOwn(unavailable, 'likeCount'));
+    if (value !== undefined) {
+      assert.throws(() => validateEntry(link({ replyCount: value })), /replyCount/);
+      assert.throws(() => validateEntry(link({ likeCount: value })), /likeCount/);
+    }
+  }
+});
+test('engagement links open the original post with exact accessible counts and compact visible numbers', () => {
+  const html = renderGarden(validateGarden(snapshot([link({ replyCount: 1, likeCount: 1234 })])));
+  const counts = [...html.matchAll(/<a class="engagement-count"[^>]*>.*?<\/a>/g)].map(([markup]) => markup);
+  assert.equal(counts.length, 2);
+  for (const markup of counts) {
+    assert.ok(markup.includes(`href="${source}"`));
+    assert.match(markup, /target="_blank" rel="noopener noreferrer"/);
+  }
+  assert.match(counts[0], /aria-label="1 reply on Bluesky \(opens in a new tab\)"/);
+  assert.match(counts[1], /aria-label="1,234 likes on Bluesky \(opens in a new tab\)"/);
+  assert.match(counts[1], /<span>1\.2K<\/span>/);
+  assert.ok(!html.includes('class="source-link"'));
+  assert.equal((html.match(/Engage on Bluesky/g) ?? []).length, 1); // The profile link remains.
+  const zero = renderGarden(validateGarden(snapshot([link({ replyCount: 0, likeCount: 0 })])));
+  assert.match(zero, /aria-label="0 replies on Bluesky/);
+  assert.match(zero, /aria-label="0 likes on Bluesky/);
+  assert.ok(!renderGarden(validateGarden(snapshot([link()]))).includes('class="engagement-count"'));
+  const partial = renderGarden(validateGarden(snapshot([link({ likeCount: 1 })])));
+  assert.match(partial, /aria-label="1 like on Bluesky/);
+  assert.ok(!partial.includes('replies on Bluesky'));
+});
 test('only the owner’s marked posts are included, including explicitly marked replies', () => {
   const original = feedItem();
   const items = [

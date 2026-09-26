@@ -51,6 +51,27 @@ test('repeated imports are stable and do not add volatile profile counters to th
   await syncGarden({ handle: profile.handle, filename, fetchJson: api([post('saved')], { ...profile, followersCount: 999 }) });
   assert.equal(await readFile(filename, 'utf8'), first);
 });
+test('sync refreshes engagement counts in both directions and preserves them during an outage', async t => {
+  const filename = await workspace(t);
+  const counted = (replyCount, likeCount) => {
+    const item = post('saved');
+    return { post: { ...item.post, replyCount, likeCount } };
+  };
+  await syncGarden({ handle: profile.handle, filename, fetchJson: api([counted(1, 2)]) });
+  await syncGarden({ handle: profile.handle, filename, fetchJson: api([counted(3, 7)]) });
+  let [entry] = (await readGarden(filename)).entries;
+  assert.equal(entry.replyCount, 3);
+  assert.equal(entry.likeCount, 7);
+  await syncGarden({ handle: profile.handle, filename, fetchJson: api([counted(0, 0)]) });
+  [entry] = (await readGarden(filename)).entries;
+  assert.equal(entry.replyCount, 0);
+  assert.equal(entry.likeCount, 0);
+  const previous = await readFile(filename, 'utf8');
+  await syncGarden({ handle: profile.handle, filename, fetchJson: api([counted(0, 0)]) });
+  assert.equal(await readFile(filename, 'utf8'), previous);
+  await assert.rejects(syncGarden({ handle: profile.handle, filename, fetchJson: async () => { throw new Error('offline'); } }), /offline/);
+  assert.equal(await readFile(filename, 'utf8'), previous);
+});
 test('a mismatched profile response cannot replace the saved garden', async t => {
   const filename = await workspace(t);
   await syncGarden({ handle: profile.handle, filename, fetchJson: api([post('saved')]) });

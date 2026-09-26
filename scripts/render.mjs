@@ -24,6 +24,8 @@ const icons = {
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   alphabet: '<path d="m3 15 4-10 4 10M5 11h4M14 5h7l-7 10h7M4 20h16"/>',
   arrow: '<path d="M5 19 19 5M5 5h14v14"/>',
+  reply: '<path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/>',
+  heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/>',
 };
 export const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name.toLowerCase()] ?? icons[{ videos: 'talks', notes: 'essays' }[name.toLowerCase()]] ?? icons.links}</svg>`;
 const tagButton = tag => `<button type="button" class="tag" data-tag="${e(tag)}" aria-pressed="false">#${e(tag)}</button>`;
@@ -52,6 +54,15 @@ const avatar = (profile, className = '') => `<span class="avatar ${className}">$
 const mentionLink = ({ text, href }) => `<a class="mention" href="${e(href)}" target="_blank" rel="noopener noreferrer">${e(text)}<span class="sr-only"> (opens in a new tab)</span></a>`;
 const linkedMentions = (text, mentions) => mentionSegments(text, mentions).map(part => part.href ? mentionLink(part) : e(part.text)).join('');
 const linkedText = text => text.split(/(https?:\/\/[^\s<>]+)/g).map(part => /^https?:\/\//.test(part) ? `<a href="${e(part)}" target="_blank" rel="noopener noreferrer">${e(part.replace(/^https?:\/\//, ''))}</a>` : linkedMentions(part)).join('');
+const compactCount = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 });
+const engagementCounts = entry => [
+  { key: 'replyCount', symbol: 'reply', singular: 'reply', plural: 'replies' },
+  { key: 'likeCount', symbol: 'heart', singular: 'like', plural: 'likes' },
+].filter(({ key }) => entry[key] !== undefined).map(({ key, symbol, singular, plural }) => {
+  const count = entry[key];
+  const label = `${count.toLocaleString('en')} ${count === 1 ? singular : plural} on Bluesky`;
+  return `<a class="engagement-count" href="${e(entry.source)}" target="_blank" rel="noopener noreferrer" title="${e(label)}" aria-label="${e(label)} (opens in a new tab)">${icon(symbol)}<span>${e(compactCount.format(count))}</span></a>`;
+}).join('');
 const linkedTitle = entry => {
   const parts = mentionSegments(entry.title, entry.mentions);
   if (!parts.some(part => part.href)) return `<a href="${e(entry.url)}" target="_blank" rel="noopener noreferrer">${e(entry.title)}<span class="outbound">${icon('arrow')}<span class="sr-only"> (opens in a new tab)</span></span></a>`;
@@ -73,7 +84,7 @@ const renderEntry = (entry, index) => {
     ${media.length ? `<div class="entry-media${media.every(item => item.type === 'image') && media.length > 1 ? ' image-gallery' : ''}">${media.map((item, i) => renderMedia(item, entry, i)).join('')}</div>` : ''}
     ${linked.length ? `<div class="entry-links">${linked.map((link, i) => `<a class="link-preview" href="${e(link.url)}" target="_blank" rel="noopener noreferrer">${i === 0 && entry.thumbnail ? `<img src="${e(entry.thumbnail)}" alt="" width="72" height="72" loading="lazy">` : ''}<span><strong>${e(link.title)}</strong><small>${e(domain(link.url))}</small></span>${icon('arrow')}<span class="sr-only"> (opens in a new tab)</span></a>`).join('')}</div>` : ''}
     ${entry.tags.length ? `<div class="entry-tags">${entry.tags.map(tagButton).join('')}</div>` : ''}
-    <div class="entry-bottom"><span class="entry-details"><span class="entry-format">${icon(entry.category)}${e(entry.category)}</span>${timestamp}</span><a class="source-link" href="${e(entry.source)}" target="_blank" rel="noopener noreferrer" aria-label="Engage on Bluesky (opens in a new tab)">Engage on Bluesky ${icon('arrow')}</a></div>
+    <div class="entry-bottom"><span class="entry-details"><span class="entry-format">${icon(entry.category)}${e(entry.category)}</span>${timestamp}</span><span class="entry-engagement">${engagementCounts(entry)}</span></div>
   </article>
   ${entry.thumbnail && !rich ? `<div class="entry-image"><img src="${e(entry.thumbnail)}" alt="" width="88" height="88" loading="lazy" referrerpolicy="no-referrer"></div>` : ''}
 </li>`;

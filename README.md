@@ -111,6 +111,8 @@ YouTube and Vimeo links get video players. Spotify, SoundCloud, and direct audio
 
 Your garden refreshes **nightly at 3:23 a.m. Pacific**. It is not an instant feed: new posts appear after the next successful build.
 
+Cards show reply and like counts from Bluesky, refreshed with each successful sync. Click the speech bubble or heart count to open the original post on Bluesky. Counts reflect the last sync rather than updating live; unavailable counts are left out.
+
 **Want a post to appear sooner?** In your repository, open **Actions → Publish garden → Run workflow**. This refreshes both your posts and your profile. GitHub schedules can sometimes run late; the [workflow scheduling docs](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule) explain the timing.
 
 To change your name, avatar, banner, or bio, edit your Bluesky profile. To remove an entry, delete its Bluesky post; the next successful update removes it from the garden.

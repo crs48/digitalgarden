@@ -89,6 +89,7 @@ export const entriesFromFeed = (feed, actorDid) => feed.flatMap(item => {
     ...(isWebUrl(external?.thumb) ? { thumbnail: external.thumb } : {}),
     ...(links.length ? { links } : {}),
     ...(media.length ? { media } : {}),
+    ...Object.fromEntries(['replyCount', 'likeCount'].filter(key => Number.isSafeInteger(post[key]) && post[key] >= 0).map(key => [key, post[key]])),
     added: new Date(record.createdAt).toISOString().slice(0, 10), createdAt: new Date(record.createdAt).toISOString(), source,
   }];
 });
