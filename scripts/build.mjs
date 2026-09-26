@@ -4,8 +4,7 @@ import { readGarden } from './data.mjs';
 import { renderGarden } from './render.mjs';
 
 export const build = async () => {
-  const saved = await readGarden();
-  const garden = { ...saved, profile: { ...saved.profile, displayName: process.env.GARDEN_DISPLAY_NAME?.trim() || saved.profile.displayName } };
+  const garden = await readGarden();
   await rm('dist', { recursive: true, force: true });
   await mkdir('dist', { recursive: true });
   await cp('public', 'dist', { recursive: true });

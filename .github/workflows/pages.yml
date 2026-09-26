@@ -4,7 +4,8 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '23 */6 * * *'
+    - cron: '23 3 * * *'
+      timezone: 'America/Los_Angeles'
 
 concurrency:
   group: garden-pages
@@ -18,7 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
-      GARDEN_DISPLAY_NAME: ${{ vars.GARDEN_DISPLAY_NAME }}
     permissions:
       contents: write
     steps:

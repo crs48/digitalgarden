@@ -2,21 +2,20 @@
 
 Your Bluesky profile, with a little more room for the things you love. Post with **#garden** to collect links, ideas, images, videos, and audio in a garden of your own. Every other hashtag becomes a topic you can browse.
 
-**[Visit the garden](https://crs.garden/) · [Public repository](https://github.com/crs48/digitalgarden)**
+**[Create your garden →](https://github.com/crs48/digitalgarden/generate) · [See it live](https://crs.garden/)**
 
-Your avatar, banner, display name, bio, and posts all come from Bluesky. There is no YAML collection, manual content editor, account to create, or app password to manage. The site is static and hosted on GitHub Pages.
+**The only setting is your Bluesky handle.** Your name, avatar, banner, bio, and posts all come from Bluesky. GitHub Actions refreshes and publishes your garden every night. No content files to edit, passwords, API keys, or extra accounts.
 
 ## Make it yours
 
-1. **[Use this template](https://github.com/crs48/digitalgarden/generate)** to create a public repository.
-2. In your new repository, open **Settings → Secrets and variables → Actions → Variables**. Add a repository variable named **`BLUESKY_HANDLE`** with your handle, such as `your-name.bsky.social`. This is a public handle, not a secret or password.
-3. In **Settings → Pages → Build and deployment**, choose **GitHub Actions**.
-4. Run **Actions → Publish garden → Run workflow**. Your profile and `#garden` posts replace the template's saved snapshot automatically. The deployment link opens your garden.
-5. Add that garden URL to your Bluesky bio so people can move between your profile and your collection.
+1. **Copy the template.** Click **[Use this template](https://github.com/crs48/digitalgarden/generate)** and create a public repository. Forking also works.
+2. **Set your handle.** In your copy, open **Settings → Secrets and variables → Actions → Variables → New repository variable**. Set the name to **`BLUESKY_HANDLE`** and the value to your handle, such as **`@crs.land`** or **`your-name.bsky.social`**. The `@` is optional. This is a variable, not a secret.
+3. **Enable hosting.** In **Settings → Pages → Build and deployment → Source**, choose **GitHub Actions**.
+4. **Publish once.** Open **Actions → Publish garden → Run workflow**. When it finishes, open the deployment link to see your garden. Future updates happen nightly.
 
-That's the setup. From then on, tend your garden by posting on Bluesky.
+If you forked the repository, GitHub may ask you to enable workflows in the **Actions** tab first. Set `BLUESKY_HANDLE` in your own copy; repository variables are not copied with the source files.
 
-To use a different name in your garden, optionally add a **`GARDEN_DISPLAY_NAME`** repository variable. It overrides the displayed name while posts and other profile details continue to sync from Bluesky. For local previews, use `GARDEN_DISPLAY_NAME="Your name" npm run dev`. Leave it unset to use your Bluesky display name.
+That's it. Add your garden's URL to your Bluesky bio, then post with **#garden** to grow it. To change your displayed name, avatar, banner, or bio, edit your Bluesky profile; the next sync brings those changes into your garden.
 
 The workflow checks your handle before publishing. It will not publish this template's saved profile as your own if setup is missing or importing a different account fails. A profile with no `#garden` posts gets a real empty garden.
 
@@ -62,12 +61,16 @@ Search covers titles, notes, links, formats, and hashtags. Multiple selected top
 
 ## How syncing works
 
+**Yes: posts are pulled in GitHub Actions, just before the build.** Every run fetches your public profile and posts, keeps the posts tagged `#garden`, saves a snapshot, builds the static site, and deploys it to GitHub Pages. Visitors read the built site; their browsers do not fetch your Bluesky feed.
+
+The scheduled run is **nightly at 3:23 a.m. Pacific** (`America/Los_Angeles`, including daylight saving time). Pushing to `main` or choosing **Actions → Publish garden → Run workflow** runs the same pipeline immediately, so you can publish a new post without waiting for the next night. GitHub schedules can run later than their scheduled time. See [GitHub's scheduling documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+
 - Only your own posts containing `#garden` are imported. Marked replies and quote posts are included; reposts and unmarked posts are not.
 - The marker is case-insensitive. A URL fragment such as `https://example.com/#garden` does not count as a hashtag.
 - **Bluesky is the source of truth.** After a successful complete sync, deleted posts and posts no longer marked `#garden` disappear. Removing a tag requires changing/replacing the source post through whatever editing features your Bluesky client supports.
 - Two different posts about the same link remain distinct. Repeated imports of the same post do not create duplicates.
 - Your public name, bio, avatar, and banner refresh along with your posts. Missing profile images have a simple fallback.
-- The workflow runs every six hours, on pushes to `main`, and on manual runs. GitHub can delay schedules and [disables them after 60 days of repository inactivity](https://docs.github.com/en/actions/using-workflows/disabling-and-enabling-a-workflow).
+- GitHub [disables scheduled workflows after 60 days of repository inactivity](https://docs.github.com/en/actions/using-workflows/disabling-and-enabling-a-workflow). Re-enable **Publish garden** in the Actions tab if needed.
 - The importer reads the public Bluesky API without logging in and never posts to your account.
 - `content/garden.json` is a generated snapshot, **not an authoring file**. A failed or incomplete import leaves the entire previous snapshot untouched. Publishing may use that snapshot only when it belongs to the configured handle. This means a deleted post may remain visible during an API outage until a successful sync.
 - Feed pagination is limited to 5,000 posts. A larger history fails visibly and keeps the previous snapshot instead of silently truncating it.
@@ -75,11 +78,13 @@ Search covers titles, notes, links, formats, and hashtags. Multiple selected top
 
 ```mermaid
 flowchart LR
-  Handle["One Bluesky handle"] --> API[Public Bluesky API]
+  Trigger["Nightly · push · manual run"] --> Action[GitHub Actions]
+  Action --> API[Public Bluesky API]
+  Handle["One Bluesky handle"] --> API
   Profile["Avatar · banner · name · bio"] --> API
   Posts["Your posts tagged #garden"] --> API
-  API --> Sync[Complete sync]
-  Sync --> Snapshot["content/garden.json"]
+  API --> Sync["Keep your #garden posts"]
+  Sync --> Snapshot["Saved profile and posts"]
   Snapshot --> Build[Static build]
   Build --> Pages[GitHub Pages]
   Pages --> Reader[Browse · search · follow a topic]
