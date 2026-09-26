@@ -30,24 +30,26 @@ svg { width: 20px; height: 20px; flex: 0 0 auto; vertical-align: middle; }
 .avatar { display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; color: var(--accent); background: var(--accent-soft); font-size: 20px; font-weight: 600; }
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
 .main-column { min-width: 0; min-height: 100vh; border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); }
-.page-header { display: flex; justify-content: space-between; align-items: center; min-height: 66px; padding: 10px 20px; border-bottom: 1px solid var(--rule); }
+.page-header { display: flex; align-items: center; min-height: 66px; padding: 10px 20px; }
+.page-header h1 { margin: 0; font-size: inherit; line-height: 1.2; }
 .header-count { display: block; padding-left: 37px; color: var(--muted); font-size: 12px; }
-.header-profile-link { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: var(--muted); }
-.header-profile-link:hover { color: var(--accent); background: var(--accent-soft); }
-.profile-banner { height: 160px; background: #e5f1ff; overflow: hidden; }
+.profile-header { border: 1px solid var(--rule); border-radius: 14px; background: #fff; }
+.profile-banner { height: 72px; background: #e5f1ff; border-radius: 13px 13px 0 0; overflow: hidden; }
 .profile-banner img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.profile-info { padding: 0 20px 22px; }
-.profile-actions { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-top: -42px; margin-bottom: 10px; position: relative; }
-.profile-avatar .avatar { width: 96px; height: 96px; border: 4px solid white; font-size: 40px; }
-.profile-button { display: inline-flex; gap: 7px; align-items: center; padding: 8px 15px; margin-bottom: 6px; border: 1px solid #ccd5df; border-radius: 22px; background: white; font-size: 14px; font-weight: 650; }
+.profile-info { padding: 16px; }
+.profile-identity { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.profile-identity > div { min-width: 0; }
+.profile-avatar { flex-shrink: 0; }
+.profile-avatar .avatar { width: 48px; height: 48px; font-size: 24px; }
+.profile-button { display: flex; justify-content: center; gap: 7px; align-items: center; min-height: 36px; padding: 7px 12px; margin-top: 14px; border: 1px solid #ccd5df; border-radius: 22px; background: white; font-size: 12px; font-weight: 650; white-space: nowrap; }
 .profile-button:hover { color: var(--ink); background: var(--soft); }
 .profile-button svg { width: 14px; height: 14px; }
-h1 { font-size: 26px; line-height: 1.25; letter-spacing: -.5px; font-weight: 750; margin: 0; overflow-wrap: anywhere; }
-.profile-handle { font-size: 15px; color: var(--muted); overflow-wrap: anywhere; }
-.profile-bio { margin: 14px 0 0; line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; }
+.profile-identity h2 { font-size: 20px; line-height: 1.25; letter-spacing: -.3px; font-weight: 750; margin: 0; overflow-wrap: anywhere; }
+.profile-handle { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+.profile-bio { margin: 14px 0 0; font-size: 13px; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
 .profile-bio a { color: var(--accent); }
 .profile-bio a:hover { text-decoration: underline; }
-.garden-description { font-size: 14px; color: var(--muted); margin: 18px 0 0; line-height: 1.6; }
+.garden-description { font-size: 12px; color: var(--muted); margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--rule); line-height: 1.6; }
 .garden-description span { color: var(--accent); }
 .collection { min-width: 0; min-height: calc(100svh - 76px); scroll-margin-top: 76px; overflow-anchor: none; }
 .collection-toolbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; min-width: 0; background: #fffffff5; backdrop-filter: blur(12px); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
@@ -126,10 +128,10 @@ h1 { font-size: 26px; line-height: 1.25; letter-spacing: -.5px; font-weight: 750
 .source-link svg { width: 12px; height: 12px; }
 .entry-image { width: 52px; height: 52px; flex: 0 0 52px; border-radius: 8px; overflow: hidden; }
 .entry-image img { width: 100%; height: 100%; object-fit: cover; }
-.garden-sidebar { position: sticky; top: 24px; margin-top: 24px; min-width: 0; }
-.about-garden { padding: 18px 16px; border-radius: 14px; background: #f1f7ff; }
-.about-garden h2 { font-size: 17px; margin: 0 0 8px; letter-spacing: -.2px; }
-.about-garden p { font-size: 14px; color: var(--muted); line-height: 1.65; margin: 0; }
+.garden-sidebar { position: sticky; top: 24px; margin-top: 24px; min-width: 0; max-height: calc(100svh - 112px); overflow-y: auto; scrollbar-width: thin; }
+.about-garden { padding: 16px; margin-top: 16px; border-radius: 14px; background: #f1f7ff; }
+.about-garden h2 { font-size: 15px; margin: 0 0 6px; letter-spacing: -.2px; }
+.about-garden p { font-size: 13px; color: var(--muted); line-height: 1.6; margin: 0; }
 .about-garden strong { color: var(--accent); font-weight: 500; }
 .site-note { color: var(--muted); font-size: 12px; line-height: 1.7; padding: 0 12px; margin-top: 20px; }
 .site-note a { display: inline-block; margin-top: 5px; }
@@ -216,8 +218,17 @@ footer { padding: 32px 24px calc(88px + env(safe-area-inset-bottom, 0px)); color
 .entries[data-layout=masonry] .image-gallery { grid-template-columns: 1fr; }
 .entries[data-layout=masonry] .entry-image { margin-top: 10px; }
 @media (max-width: 960px) {
-  .shell { display: block; padding: 0 24px; }
-  .garden-sidebar { display: none; }
+  .shell { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 0 24px; }
+  .main-column { display: contents; }
+  .page-header { order: -2; }
+  .garden-sidebar { position: static; order: -1; margin: 0; max-height: none; overflow: visible; }
+  .garden-sidebar .about-garden, .garden-sidebar .site-note { display: none; }
+  .profile-header { border: 0; border-radius: 0; }
+  .profile-banner { display: none; }
+  .profile-info { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 12px 20px 18px; }
+  .profile-button { margin: 0; }
+  .profile-bio, .garden-description { grid-column: 1 / -1; margin: 0; }
+  .garden-description { padding-top: 10px; }
 }
 @media (max-width: 680px) {
   .shell { padding: 0; }
@@ -225,14 +236,8 @@ footer { padding: 32px 24px calc(88px + env(safe-area-inset-bottom, 0px)); color
   .page-header { min-height: 60px; padding: 8px 16px; }
   .brand { font-size: 22px; }
   .garden-badge { right: max(12px, env(safe-area-inset-right, 0px)); bottom: max(12px, env(safe-area-inset-bottom, 0px)); min-height: 44px; }
-  .profile-banner { height: 138px; }
-  .profile-info { padding: 0 16px 20px; }
-  .profile-actions { margin-top: -38px; }
-  .profile-avatar .avatar { width: 88px; height: 88px; }
-  .profile-button { font-size: 13px; padding: 8px 12px; }
-  h1 { font-size: 25px; }
-  .profile-bio { font-size: 15px; }
-  .garden-description { font-size: 13px; }
+  .profile-info { padding: 12px 16px 18px; }
+  .profile-button { min-height: 44px; padding-inline: 10px; }
   .filter-strip { padding: 8px 16px; gap: 8px; scroll-padding-inline: 16px; }
   .view-switch { margin-right: 8px; padding-left: 4px; }
   .view-switch button { width: 40px; height: 44px; }

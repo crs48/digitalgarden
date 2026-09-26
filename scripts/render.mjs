@@ -101,17 +101,9 @@ export const renderGarden = ({ profile, entries }, { assetVersion = '' } = {}) =
 </head>
 <body>
   <a class="skip-link" href="#collection">Skip to garden</a>
-  <div class="shell">
-    <main class="main-column">
-      <header class="page-header"><div><a class="brand" href="./" aria-label="Digital garden home">${icon('garden')}<span>#garden</span></a><span class="header-count">${entries.length} ${entries.length === 1 ? 'post' : 'posts'} collected</span></div><a class="header-profile-link" href="${e(source)}" aria-label="Open @${e(profile.handle)} on Bluesky">${icon('arrow')}</a></header>
-      <section class="profile-header" aria-labelledby="page-title">
-        <div class="profile-banner">${profile.banner ? `<img src="${e(profile.banner)}" alt="" fetchpriority="high" width="1500" height="500">` : ''}</div>
-        <div class="profile-info"><div class="profile-actions"><a class="profile-avatar" href="${e(source)}" aria-label="${e(profile.displayName)} on Bluesky">${avatar(profile)}</a><a class="profile-button" href="${e(source)}">View on Bluesky ${icon('arrow')}</a></div>
-          <h1 id="page-title">${e(profile.displayName)}</h1><a class="profile-handle" href="${e(source)}">@${e(profile.handle)}</a>
-          ${profile.description ? `<p class="profile-bio">${linkedText(profile.description)}</p>` : ''}
-          <p class="garden-description">A garden of links, ideas, and discoveries.<br>Collected on Bluesky with <span>#garden</span>.</p>
-        </div>
-      </section>
+  <main class="shell">
+    <div class="main-column">
+      <header class="page-header"><div><h1 id="page-title"><a class="brand" href="./" aria-label="Digital garden home">${icon('garden')}<span>#garden</span></a></h1><span class="header-count">${entries.length} ${entries.length === 1 ? 'post' : 'posts'} collected</span></div></header>
       <div class="collection-toolbar" hidden>
         <div class="filter-strip" role="region" aria-label="Garden filters" tabindex="0">
           <div class="search" data-expanded="false"><button type="button" id="search-toggle" aria-label="Search garden" title="Search garden (/)" aria-expanded="false" aria-controls="search-field">${icon('search')}</button><div id="search-field" class="search-field" hidden><input id="search" type="search" placeholder="Search" aria-label="Search the collection" autocomplete="off"><button type="button" id="search-close" aria-label="Close search and clear query" title="Close search (Esc)">${icon('close')}</button></div></div>
@@ -127,12 +119,21 @@ export const renderGarden = ({ profile, entries }, { assetVersion = '' } = {}) =
         <div class="empty-state" ${entries.length ? 'hidden' : ''}><span aria-hidden="true">${icon('garden')}</span><h3>${entries.length ? 'No posts found' : 'A little room to grow'}</h3><p>${entries.length ? 'Try another search or choose a different topic.' : 'Posts tagged #garden on Bluesky will appear here.'}</p><button type="button" class="empty-reset" ${entries.length ? '' : 'hidden'}>Show all posts</button></div>
       </section>
       <footer>Grown on Bluesky. A garden of your own.</footer>
-    </main>
+    </div>
     <aside class="garden-sidebar" aria-label="About this garden">
+      <section class="profile-header" aria-labelledby="profile-title">
+        ${profile.banner ? `<div class="profile-banner"><img src="${e(profile.banner)}" alt="" width="1500" height="500"></div>` : ''}
+        <div class="profile-info">
+          <div class="profile-identity"><a class="profile-avatar" href="${e(source)}" aria-label="${e(profile.displayName)} on Bluesky">${avatar(profile)}</a><div><h2 id="profile-title">${e(profile.displayName)}</h2><a class="profile-handle" href="${e(source)}">@${e(profile.handle)}</a></div></div>
+          <a class="profile-button" href="${e(source)}">View on Bluesky ${icon('arrow')}</a>
+          ${profile.description ? `<p class="profile-bio">${linkedText(profile.description)}</p>` : ''}
+          <p class="garden-description">A garden of links, ideas, and discoveries. Collected on Bluesky with <span>#garden</span>.</p>
+        </div>
+      </section>
       <section class="about-garden"><h2>Post it. Keep it.</h2><p>Add <strong>#garden</strong> to a Bluesky post to give it a home here. Your other hashtags become topics.</p></section>
       <p class="site-note">An independent garden, connected to Bluesky.<br><a href="https://github.com/crs48/digitalgarden">Open source</a></p>
     </aside>
-  </div>
+  </main>
   <a class="garden-badge" href="${templateUrl}" aria-label="Create your own garden on GitHub">${icon('github')}<span>Create your own garden</span></a>
 </body>
 </html>`;
