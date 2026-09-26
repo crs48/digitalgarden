@@ -53,11 +53,11 @@ export const renderGarden = (config, entries) => {
       <div class="garden-layout">
         <aside class="filters" aria-label="Filter collection" hidden>
           <div class="filter-section"><h2>Browse by format</h2><div class="categories">${categoryButton('', 'Everything', entries.length)}${categories.map(category => categoryButton(category, category, entries.filter(entry => entry.category === category).length)).join('')}</div></div>
-          ${tags.length ? `<div class="filter-section topics"><h2>Follow a thread</h2><div class="topic-tags">${tags.map(tagButton).join('')}</div><p class="filter-hint">Choose a topic. See where it leads.</p></div>` : ''}
+          ${tags.length ? `<details class="filter-section topics" open><summary>Follow a thread <span>${tags.length} topics</span></summary><div class="topic-tags">${tags.map(tagButton).join('')}</div></details>` : ''}
           <div class="sidebar-note"><span aria-hidden="true">↳</span><p>A garden is never finished.<br>Neither is this one.</p></div>
         </aside>
         <section id="collection" class="collection" aria-labelledby="collection-title" tabindex="-1">
-          <div class="collection-tools" hidden><label class="search">${icon('search')}<input id="search" type="search" placeholder="Find something interesting…" aria-label="Search the collection" autocomplete="off"><kbd aria-hidden="true">/</kbd></label><label class="sort"><span class="sr-only">Sort the collection</span><select id="sort"><option value="curated">Collection order</option><option value="newest">Newest additions</option><option value="title">Title, A–Z</option></select></label></div>
+          <div class="collection-tools" hidden><label class="search">${icon('search')}<input id="search" type="search" placeholder="Search the collection" aria-label="Search the collection" autocomplete="off"><kbd aria-hidden="true">/</kbd></label><label class="sort"><span class="sr-only">Sort the collection</span><select id="sort"><option value="curated">Collection order</option><option value="newest">Newest additions</option><option value="title">Title, A–Z</option></select></label></div>
           <div class="collection-heading"><h2 id="collection-title">The collection <span class="result-count" role="status" aria-live="polite">${entries.length} ${entries.length === 1 ? 'item' : 'items'}</span></h2><button type="button" id="clear-filters" hidden>Clear filters <span aria-hidden="true">×</span></button></div>
           <div id="active-filters" class="active-filters" hidden></div>
           ${entries.some(entry => entry.example) ? '<p class="example-notice"><span>Starter collection</span> Example links to make your own.</p>' : ''}

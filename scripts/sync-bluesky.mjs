@@ -18,7 +18,7 @@ try {
     const previous = await readImported();
     // Keep the newest post when the same link was shared more than once.
     const incoming = entriesFromFeed(feed, bluesky, did).map(entry => validateEntry(entry));
-    const entries = mergeEntries(incoming, previous, bluesky.excludeUrls).sort((a, b) => b.added.localeCompare(a.added));
+    const entries = mergeEntries(incoming, previous, bluesky.excludeUrls).sort((a, b) => (b.added ?? '').localeCompare(a.added ?? ''));
     const serialized = `${JSON.stringify(entries, null, 2)}\n`;
     if (serialized !== `${JSON.stringify(previous, null, 2)}\n`) {
       await writeFile('content/bluesky.json.tmp', serialized);

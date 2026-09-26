@@ -2,7 +2,14 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { watch } from 'node:fs';
 import { resolve, extname, sep } from 'node:path';
-import { build } from './build.mjs';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+
+const run = promisify(execFile);
+const build = async () => {
+  const { stdout } = await run(process.execPath, ['scripts/build.mjs']);
+  process.stdout.write(stdout);
+};
 
 await build();
 const root = resolve('dist');

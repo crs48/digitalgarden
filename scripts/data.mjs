@@ -69,8 +69,9 @@ export const validateConfig = config => {
 
 export const mergeEntries = (manual, imported, excludeUrls = []) => {
   const excluded = new Set(excludeUrls.map(canonicalUrl));
-  return [...manual, ...imported].filter((entry, index, all) =>
-    !excluded.has(canonicalUrl(entry.url)) && all.findIndex(candidate => canonicalUrl(candidate.url) === canonicalUrl(entry.url)) === index);
+  const ordered = [...manual, ...imported].map(entry => [canonicalUrl(entry.url), entry]);
+  const byUrl = new Map([...ordered].reverse());
+  return [...new Set(ordered.map(([url]) => url))].filter(url => !excluded.has(url)).map(url => byUrl.get(url));
 };
 
 export const readConfig = async () => validateConfig(parse(await readFile('garden.yaml', 'utf8')));

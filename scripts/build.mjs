@@ -1,13 +1,13 @@
 import { mkdir, rm, cp, writeFile, access } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
-import { readConfig, readImported, mergeEntries } from './data.mjs';
+import { readConfig, readImported, mergeEntries, isWebUrl } from './data.mjs';
 import { renderGarden } from './render.mjs';
 
 export const build = async () => {
   const config = await readConfig();
   const imported = config.bluesky.enabled ? await readImported() : [];
   const entries = mergeEntries(config.entries, imported, config.bluesky.excludeUrls);
-  await Promise.all(entries.filter(entry => entry.thumbnail && !entry.thumbnail.startsWith('http')).map(entry => access(`public/${entry.thumbnail}`).catch(() => { throw new Error(`Missing thumbnail: public/${entry.thumbnail}`); })));
+  await Promise.all(entries.filter(entry => entry.thumbnail && !isWebUrl(entry.thumbnail)).map(entry => access(`public/${entry.thumbnail}`).catch(() => { throw new Error(`Missing thumbnail: public/${entry.thumbnail}`); })));
   await rm('dist', { recursive: true, force: true });
   await mkdir('dist', { recursive: true });
   await cp('public', 'dist', { recursive: true });

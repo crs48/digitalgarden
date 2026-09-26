@@ -11,6 +11,12 @@ const categoryButtons = [...document.querySelectorAll('[data-category-filter]')]
 const tagButtons = [...document.querySelectorAll('[data-tag]')];
 const knownCategories = new Set(categoryButtons.map(button => button.dataset.categoryFilter));
 const knownTags = new Set(tagButtons.map(button => button.dataset.tag));
+const topics = document.querySelector('.topics');
+const mobile = matchMedia('(max-width: 680px)');
+if (topics) {
+  topics.open = !mobile.matches;
+  mobile.addEventListener('change', event => { topics.open = !event.matches; });
+}
 const readState = () => {
   const params = new URLSearchParams(location.search);
   return {
@@ -33,7 +39,8 @@ const compare = (a, b) => state.sort === 'title' ? a.dataset.title.localeCompare
 
 const update = (writeUrl = true) => {
   const sorted = [...entries].sort(compare);
-  sorted.forEach(entry => { entry.hidden = !matches(entry, state); list.append(entry); });
+  sorted.forEach(entry => { entry.hidden = !matches(entry, state); });
+  if ([...list.children].some((entry, index) => entry !== sorted[index])) list.replaceChildren(...sorted);
   const visible = entries.filter(entry => !entry.hidden).length;
   count.textContent = `${visible} ${visible === 1 ? 'item' : 'items'}`;
   heading.firstChild.textContent = `${state.category || 'The collection'} `;
