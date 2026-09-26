@@ -15,7 +15,7 @@ export const build = async () => {
   await cp('src/garden.js', 'dist/garden.js');
   await cp('src/media.js', 'dist/media.js');
   await mkdir('dist/vendor', { recursive: true });
-  await cp('node_modules/hls.js/dist/hls.light.mjs', 'dist/vendor/hls.light.mjs');
+  await cp('node_modules/hls.js/dist/hls.light.min.mjs', 'dist/vendor/hls.light.mjs');
   await cp('node_modules/hls.js/LICENSE', 'dist/vendor/hls.LICENSE');
   await writeFile('dist/index.html', renderGarden(config, entries));
   await writeFile('dist/.nojekyll', '');
