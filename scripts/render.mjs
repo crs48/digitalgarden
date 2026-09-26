@@ -58,7 +58,8 @@ const renderEntry = (entry, index, profile) => {
 </li>`;
 };
 
-export const renderGarden = ({ profile, entries }) => {
+export const renderGarden = ({ profile, entries }, { assetVersion = '' } = {}) => {
+  const assetQuery = assetVersion ? `?v=${encodeURIComponent(assetVersion)}` : '';
   const categories = [...new Set(entries.map(entry => entry.category))].sort((a, b) => a.localeCompare(b));
   const tags = [...new Set(entries.flatMap(entry => entry.tags))].sort((a, b) => a.localeCompare(b));
   const source = profileUrl(profile);
@@ -74,8 +75,8 @@ export const renderGarden = ({ profile, entries }) => {
   <meta property="og:title" content="${e(profile.displayName)}’s garden"><meta property="og:description" content="${e(description)}"><meta property="og:type" content="website">
   ${profile.avatar ? `<meta property="og:image" content="${e(profile.avatar)}">` : ''}
   <meta name="theme-color" content="#ffffff"><link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css">
-  <script src="./garden.js" type="module"></script><script src="./media.js" type="module"></script>
+  <link rel="stylesheet" href="./styles.css${assetQuery}">
+  <script src="./garden.js${assetQuery}" type="module"></script><script src="./media.js${assetQuery}" type="module"></script>
 </head>
 <body>
   <a class="skip-link" href="#collection">Skip to garden</a>

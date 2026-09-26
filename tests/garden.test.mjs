@@ -54,6 +54,10 @@ test('empty gardens show a useful prompt without samples or empty format options
   assert.ok(!html.includes('Starter collection'));
   assert.ok(!html.includes('<option value="Books"'));
 });
+test('published pages request a matching asset version under a GitHub Pages subpath', () => {
+  const html = renderGarden(snapshot(), { assetVersion: 'abc123' });
+  for (const asset of ['styles.css', 'garden.js', 'media.js']) assert.ok(html.includes(`./${asset}?v=abc123`));
+});
 test('imports retain title, category, all other tags, media, date, and source', () => {
   const [entry] = entriesFromFeed([feedItem()], did);
   assert.equal(entry.title, 'A useful idea');
