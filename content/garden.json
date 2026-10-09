@@ -4,11 +4,36 @@
     "did": "did:plc:fvfdugmhgbbvxjppo2kkveq2",
     "handle": "crs.land",
     "displayName": "Christopher Smothers",
-    "description": "site: https://crs.land\ngarden: https://crs.garden\nmaintaining: @xnet.fyi",
+    "description": "hi 👋 i'm chris and i'm running experiments to illuminate a world that lights us all up to live in\n\nsite: https://crs.land\nsupport: https://crs.tips",
     "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreidziueb25sdvizzlfd3wjl2z4k2n4l2rvwqneunlg6g3a3u3qwx64",
     "banner": "https://cdn.bsky.app/img/banner/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreicken5llkpzlskmpld6bkuo6ovthksogw3tyfaljlzgrbzyqth4qy"
   },
   "entries": [
+    {
+      "title": "How To Approach Authority Issues | with Alexa Kistler & Joe Hudson",
+      "url": "https://www.youtube.com/watch?v=5YEHiKanzUQ",
+      "category": "Videos",
+      "note": "I'm getting so Art of Accomplishment pilled. I love how they relate to authority so authentically and present the possibility of it being more human and joyful",
+      "tags": [],
+      "thumbnail": "https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:fvfdugmhgbbvxjppo2kkveq2/bafkreifhemzvmw6qsame7cec5dskgdreimx4eb2jz53wjb4ukfy5wffalu",
+      "links": [
+        {
+          "url": "https://www.youtube.com/watch?v=5YEHiKanzUQ",
+          "title": "How To Approach Authority Issues | with Alexa Kistler & Joe Hudson"
+        }
+      ],
+      "media": [
+        {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=5YEHiKanzUQ"
+        }
+      ],
+      "replyCount": 0,
+      "likeCount": 0,
+      "added": "2026-10-08",
+      "createdAt": "2026-10-08T18:01:25.125Z",
+      "source": "https://bsky.app/profile/did:plc:fvfdugmhgbbvxjppo2kkveq2/post/3mxf24mffwc2c"
+    },
     {
       "title": "The Fear of Being Seen and the Strange Way Out",
       "url": "https://www.youtube.com/watch?v=B3p3ypov6ZU",
